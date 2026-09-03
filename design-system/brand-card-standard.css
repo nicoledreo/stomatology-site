@@ -1,0 +1,608 @@
+/* brand-card-standard.css , the STANDARD tier. Loaded ON TOP of
+   stomatology-structural.css; this is what an ordinary page gets.
+
+   Contents: the control primitive (.hp-go and its two variants), the shared focus
+   ring, the copy plate and the panel, and the section label. Token-pure like the
+   structural sheet: zero hex, colour only through var(--*).
+
+   Lifted verbatim from feel-specimen.html. The .hp-go base rule was already
+   byte-identical on every page that carries a button (four of six; the about and
+   contact pages define no button because they use none), which is why it belongs to
+   a tier rather than to a page. */
+
+
+/* ============================================================================
+   THE CONTROL
+   one button, one height, one minimum width, on every page that has one.
+   The focus ring is a separate rule on purpose: it is shared with every other
+   focusable element, and it is never removed, only restyled.
+   ============================================================================ */
+
+.hp-go{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:184px;
+  height:48px;
+  padding:0 var(--ds-space-md);
+  border-radius:var(--ds-r-control);
+  border:1px solid transparent;
+  font-family:var(--ds-font-body);
+  font-size:var(--ds-fs-body);
+  font-weight:500;
+  line-height:1;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+  background-clip:padding-box;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    border-color     var(--ds-dur) var(--ds-ease),
+    color            var(--ds-dur) var(--ds-ease),
+    transform        var(--ds-dur) var(--ds-ease-out);
+}
+
+.hp-go--solid{
+  background-color:var(--ds-accent);
+  border-color:var(--ds-accent);
+  color:var(--ds-ink-on-dark);
+}
+
+.hp-go--solid:hover{ background-color:var(--ds-accent-deep); border-color:var(--ds-accent-deep); transform:translate3d(0,-2px,0); }
+
+.surface-dark .hp-go--solid:hover{ background-color:var(--ds-accent-light); border-color:var(--ds-accent-light); }
+
+.hp-go--quiet{
+  background-color:transparent;
+  border-color:var(--ds-line);
+  color:var(--ds-ink);
+}
+
+.hp-go--quiet:hover{ background-color:var(--ds-accent-soft); border-color:var(--ds-accent); transform:translate3d(0,-2px,0); }
+
+.hp-go:active{ transform:translate3d(0,0,0); }
+
+.hp-link:hover::after,
+.hp-link:focus-visible::after{ transform:scaleX(1); }
+
+.hp-go:focus-visible,
+.hp-link:focus-visible,
+.hp-route:focus-visible,
+.hp-q:focus-visible,
+.hp-tel:focus-visible{
+  outline:2px solid var(--ds-accent);
+  outline-offset:3px;
+  border-radius:var(--ds-r-control);
+}
+
+.hp-label{
+  position:relative;
+  background-color:var(--ds-bg-surface-2);
+  border-bottom:var(--ds-divider-h) solid var(--ds-line);
+  padding:var(--ds-space-lg) var(--hp-gutter);
+  box-shadow:var(--hp-shadow-box);
+}
+
+.hp-label__inner{ position:relative; z-index:3; max-width:var(--ds-container-max); margin:0 auto; }
+
+.hp-label__note--faces{
+  max-width:var(--ds-measure);
+  margin:0 0 var(--ds-space-lg);
+  padding:var(--ds-space-sm) var(--ds-space-md);
+  border-left:3px solid var(--ds-accent-ink);
+  border-radius:var(--ds-r-control);
+  background-color:var(--ds-bg-surface);
+  box-shadow:var(--hp-shadow-box);
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  font-weight:500;
+  color:var(--ds-ink);
+}
+
+/* ============================================================================
+   THE PAGE COMPONENT LAYER, folded in 2026-09-02, ONE SOURCE PER CLASS.
+
+   These classes lived inline inside the owner-approved page designs and existed in
+   no linked sheet, so an assembled page shipped those regions unstyled.
+
+   A first attempt folded them from all six designs at once. Each design carries its
+   own version of the shared components, so the sheet gained 18 competing .hp-tel
+   rules; some set a vertical padding the others compensated for, the telephone link
+   rendered a 49px box around a 25px line, and the overlap gate refused two pages.
+   A class is now claimed by the FIRST source that defines it and every later source
+   is ignored for that class, state and pseudo variants included.
+
+   Ownership: page-services.html (17), page-about.html (5), page-team.html (7)
+   ============================================================================ */
+
+.hp-ground--paper{
+  background-color:var(--ds-bg-surface);
+  background-image:
+    radial-gradient(120% 92% at 12% 0%, var(--hp-wash-c) 0%, transparent 58%),
+    linear-gradient(180deg,
+      var(--ds-bg-surface)    0%,
+      var(--ds-bg-surface-2) 52%,
+      var(--hp-ground-low)  100%);
+}
+
+.hp-ground--paper2{
+  background-color:var(--ds-bg-surface-2);
+  background-image:
+    radial-gradient(120% 92% at 88% 0%, var(--hp-wash-b) 0%, transparent 56%),
+    linear-gradient(180deg,
+      var(--hp-ground-low)    0%,
+      var(--ds-bg-surface-2) 48%,
+      var(--ds-bg-surface)  100%);
+}
+
+.hp-band:not(.hp-band--hero) .hp-h2,
+.hp-band:not(.hp-band--hero) .hp-lead,
+.hp-band:not(.hp-band--hero) .hp-wedge,
+.hp-band:not(.hp-band--hero) .hp-closing__line{ margin-left:auto; margin-right:auto; }
+
+.hp-band:not(.hp-band--hero) .hp-gorow{ display:flex; justify-content:center; }
+
+.hp-ground--paperphoto .hp-photo__scrim{
+  background-image:none;
+  background-color:var(--hp-paper-veil);
+}
+
+.hp-ground--paperphoto .hp-photo__edge{
+  background-image:linear-gradient(180deg,
+    var(--ds-bg-surface) 0%,
+    transparent         12%,
+    transparent         88%,
+    var(--ds-bg-surface) 100%);
+}
+
+.hp-band--photoband .hp-ground{ display:flex; flex-direction:column; justify-content:center; }
+
+.hp-band--photoband .hp-wrap{ width:100%; }
+
+.hp-h1,
+.hp-h2,
+.hp-service__name,
+.hp-rail__label{ text-wrap:balance; }
+
+.hp-lead,
+.hp-wedge,
+.hp-service__line,
+.hp-rail__line,
+.hp-closing__line,
+.hp-label__note{ text-wrap:pretty; }
+
+.hp-h1{
+  margin:0 0 var(--ds-space-md);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-display, var(--ds-fs-display));
+  line-height:var(--ds-lh-display);
+  letter-spacing:var(--ds-track-display);
+  font-weight:var(--ds-weight-display);
+  color:var(--ds-ink-heading);
+  max-width:none;
+}
+
+.hp-ground--paperphoto .hp-key{
+  color:var(--ds-accent-deep);
+  -webkit-text-fill-color:var(--ds-accent-deep);
+  background-image:linear-gradient(96deg, var(--ds-ink) 0%, var(--ds-accent-deep) 100%);
+}
+
+.hp-gorow{ margin-top:var(--ds-space-lg); }
+
+.hp-rail:focus-visible{
+  outline:2px solid var(--ds-accent);
+  outline-offset:4px;
+  border-radius:var(--ds-r-surface);
+}
+
+.hp-panel{
+  max-width:840px;
+  margin:0 auto;
+  padding:var(--ds-space-xl) var(--ds-space-lg);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-bg-surface);
+  background-image:linear-gradient(180deg, var(--ds-bg-surface) 0%, var(--ds-primary-soft) 100%);
+  box-shadow:var(--hp-shadow-box);
+}
+
+/* Typed as p.hp-wedge rather than .hp-wedge, and the reason is the ch. G8's A3 check flags a
+   `max-width:<n>ch` on any selector it cannot see as either a display-font element or a reading
+   paragraph, because `ch` resolves against the element's OWN font and a body-font wrapper carrying
+   a hero measure computes two to three times too wide. This is the second case, not the defect:
+   all eight instances in the build are <p> (counted, not assumed), and 52ch is a reading measure.
+   Naming the tag says so in the selector and puts the rule inside A3's own paragraph exemption. */
+p.hp-wedge{
+  margin:0;
+  max-width:52ch;
+  font-size:var(--hp-fs-boxline);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+}
+
+.hp-service__name{
+  margin:0 0 var(--ds-space-xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-on-dark);
+}
+
+.hp-service__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-on-dark);
+}
+
+.surface-dark .hp-service__name,
+.surface-dark .hp-service__line{ color:var(--ds-ink); }
+
+.hp-rail{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  height:100%;
+  padding-top:var(--ds-space-sm);
+  border-top:var(--ds-divider-h) solid var(--ds-line);
+  text-decoration:none;
+  
+  color:var(--ds-ink);
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-rail:hover{ transform:translate3d(0,-6px,0); border-top-color:var(--ds-accent); }
+
+.hp-rail__label{
+  margin:0 0 var(--ds-space-xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+}
+
+.hp-rail__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-rail__spacer{ flex:1 1 auto; order:-1; }
+
+.hp-channel{ margin:0; }
+
+.hp-plate{
+  position:relative;
+  z-index:3;
+  max-width:880px;
+  margin:0 auto;
+  padding:var(--ds-space-xl) var(--ds-space-lg);
+  border-radius:var(--ds-r-surface);
+}
+
+.hp-plate--paper{
+  background-color:var(--hp-paper-plate);
+  background-image:linear-gradient(160deg,
+    color-mix(in srgb, var(--ds-bg-surface) 0%, transparent) 0%,
+    var(--hp-plate-tint) 100%);
+  box-shadow:var(--hp-shadow-box);
+}
+
+.hero,
+.company-story,
+.the-why,
+.team-values,
+.opening-hours{ scroll-margin-block-start:var(--ds-space-lg); }
+
+.hero-persona-outcome,
+.persona-pillars,
+.capability-deep-dive,
+.ecosystem-block,
+.faq,
+.pricing-fit,
+.asking-for-someone{ position:relative; }
+
+/* ============================================================================
+   THE INLINE LINK BASE LAYER, lifted 2026-09-02 at QA.
+
+   WHY IT WAS MISSING. The component fold treated a class as "already defined" if
+   ANY rule mentioned it. .hp-tel and .hp-link are mentioned in the focus-visible
+   outline rule above, so the fold skipped them wholesale and their BASE rules were
+   never carried across. The result: three inline link classes with state rules and
+   no resting style, which is invisible to a "is this class defined" check and very
+   visible on screen. They fell through to the browser's own unvisited-link blue,
+   rgb(0,0,238), measured at 1.87:1 on the navy routing band of the services page
+   and at 9.4:1 but plainly off-brand inside the panel on the home page. The dangling
+   .hp-link:hover::after above had no base ::after to animate, so the underline
+   sweep did nothing anywhere.
+
+   Every rule below is LIFTED VERBATIM: .hp-link from the approved feel specimen,
+   .hp-tel and .hp-mail from the approved contact design. The two rules those sources
+   carry that already exist above, the focus-visible outline and the .hp-link hover
+   sweep, are deliberately NOT repeated. That is the one-source-per-class discipline
+   the earlier fold broke when it produced 18 competing .hp-tel rules.
+
+   colour:var(--ds-ink) and var(--ds-accent-ink) are both surface-aware: the tokens
+   sheet re-declares each under .surface-dark, so these read correctly on a light
+   band and on a dark one without a per-page override.
+   ============================================================================ */
+
+.hp-link{
+  position:relative;
+  color:var(--ds-accent-ink);
+  text-decoration:underline;
+  text-decoration-color:var(--ds-line);
+  text-decoration-thickness:1px;
+  text-underline-offset:5px;
+  transition:color var(--ds-dur) var(--ds-ease);
+}
+
+.hp-link::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-5px;
+  height:2px;
+  background-color:currentColor;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-link:hover{ color:var(--ds-accent-deep); }
+
+.surface-dark .hp-link:hover{ color:var(--ds-accent-light); }
+
+.hp-tel,
+.hp-mail{
+  position:relative;
+  color:var(--ds-ink);
+  text-decoration:underline;
+  text-decoration-color:var(--ds-line);
+  text-decoration-thickness:1px;
+  text-underline-offset:5px;
+  transition:color var(--ds-dur) var(--ds-ease);
+}
+
+.hp-tel::after,
+.hp-mail::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-5px;
+  height:2px;
+  background-color:currentColor;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-tel:hover::after,
+.hp-tel:focus-visible::after,
+.hp-mail:hover::after,
+.hp-mail:focus-visible::after{ transform:scaleX(1); }
+
+.hp-tel:hover,
+.hp-mail:hover{ color:var(--ds-accent-deep); }
+
+.surface-dark .hp-tel:hover,
+.surface-dark .hp-mail:hover{ color:var(--ds-accent-light); }
+
+/* SCOPED, and the scope is the point. The approved design gives the number a
+   touch target only inside a fact box or a channel row. An earlier fold carried
+   this same padding on a BARE .hp-tel, which put a 49px box around a 25px line on
+   every page and made the overlap gate refuse two of them. */
+.hp-fact .hp-tel,
+.hp-fact .hp-mail,
+.hp-channel .hp-tel,
+.hp-channel .hp-mail{
+  display:inline-block;
+  padding:12px 0;
+  font-size:var(--hp-fs-boxline);
+}
+
+.hp-fact .hp-tel::after,
+.hp-fact .hp-mail::after,
+.hp-channel .hp-tel::after,
+.hp-channel .hp-mail::after{ bottom:6px; }
+
+/* ===========================================================================
+   THE MARQUEE COMPONENT LAYER — moved here from brand-card-bespoke.css, because
+   NO PAGE LOADS THAT SHEET.
+
+   build.mjs gives each page exactly ONE tier sheet: brand-card-bespoke.css when
+   its slug appears in client-rules.bespoke_pages, brand-card-standard.css
+   otherwise. That array is EMPTY in this build's _handoff/client-rules.json, so
+   all six pages link the standard sheet and the bespoke sheet is dead on disk —
+   grep for it across pages/ returns no <link> on any page. The sitemap does mark
+   index bespoke:true, but build.mjs reads the rules array and not the sitemap,
+   so nothing carried that across the seam.
+
+   The cost was measured per page against its OWN linked sheets, not against a
+   merge of everything in _design/ — merging is what hid it. team.html used 11
+   classes that no sheet it links defines and services.html used 4. On team that
+   is the entire staff roster and the routes band: the roster rendered as a raw
+   <ul> with bullets and centred text where three cards belong. Confirmed by eye
+   in a render before this rule existed, not inferred from the grep.
+
+   Switching those two pages to the bespoke tier instead was measured and
+   REJECTED: team also needs 9 classes and services 20 that live only in the
+   standard sheet, so either sheet alone leaves a page half-styled. The two tiers
+   share just 2 class names; they are disjoint sets, not variants. Editing the
+   seam to populate bespoke_pages is not available either — _handoff/ is
+   checksummed and the build must never write it.
+
+   So the components move to the sheet every page actually loads. They are
+   copied verbatim except for the colour correction noted below.
+   =========================================================================== */
+
+.hp-service{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:clamp(260px, 30svh, 340px);
+  padding:var(--ds-space-lg) var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-primary-deep);
+  box-shadow:var(--ds-shadow-card);
+}
+
+/* The card backdrop. .hp-cardphoto is an <img width="1024" height="576"> and carried NO rule
+   in either tier sheet, so it laid out in normal flow at its intrinsic ratio: the photo sat
+   ABOVE the copy in a tall box instead of behind it, and each card measured 740px. That is
+   what pushed the services "The work we do" band to 1.78 viewports and tripped G-DENSITY.
+   With the fill declared, the same band is 0.72vh and its text density goes 140.8 -> 312.9. */
+.hp-cardphoto{
+  position:absolute; inset:0; z-index:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* The card recurses the forced grammar so its copy has a wrapper; that wrapper has to be
+   lifted above the scrim explicitly or the scrim paints over the words. */
+.hp-service > .container{ position:relative; z-index:2; }
+
+/* The scrim had position and z-index but NO background, so it darkened nothing and the card
+   titles sat white-on-photo. Measured on the rendered pixels rather than judged: the worst
+   card ("Crowns and bridges", over a sunlit wall) read 5.12:1 bare and 12.53:1 with this
+   gradient; its body line went 8.99 -> 15.75. Bottom-weighted, because that is where the
+   copy sits — the top of the photograph stays open. Same two tokens the band-level scrim
+   uses at structural :178, so the two treatments cannot drift apart. */
+.hp-cardscrim{
+  position:absolute; inset:0; z-index:1; display:block;
+  background-image:linear-gradient(180deg,
+    var(--hp-ink-open)      0%,
+    var(--hp-ink-open)     30%,
+    var(--hp-ink-plateau)  76%,
+    var(--hp-ink-plateau) 100%);
+}
+
+.hp-routes{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-routes > li{ grid-column:span 2; }
+
+.hp-routes > li:nth-child(n+4){ grid-column:span 3; }
+
+.hp-route .hp-cardphoto{
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-route:hover .hp-cardphoto{ transform:scale(1.06); }
+
+.hp-route__body{ position:relative; z-index:2; }
+
+/* THE ONE DEVIATION FROM THE BESPOKE ORIGINAL, AND IT IS A CORRECTION.
+   Both of these carried color:var(--ds-ink-on-dark) in the bespoke sheet. That
+   token is an INVERSION, not "ink for a dark surface": at :root it is white, for
+   a dark chip sitting on a light page, and .surface-dark FLIPS it to the navy so
+   a light chip on a dark page still reads. It was right in the bespoke sheet
+   because a bespoke route card sits on .hp-cardphoto, a photo backdrop that is
+   its own dark surface. team.html is the only page in this build using
+   .hp-route__label / .hp-route__line — counted, not assumed — and its cards carry
+   no .hp-cardphoto, so the band is the plain light ground. Copied unchanged, the
+   labels rendered white on white; the first render after the graft showed exactly
+   that. --ds-ink and --ds-ink-soft are the surface-AWARE roles and are correct on
+   either ground. If a photo-backed route card is ever added, it needs the
+   inversion back, scoped to that card. */
+.hp-route__label{
+  margin:0 0 var(--ds-space-2xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink);
+}
+
+.hp-route__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-people{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-person{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-bg-surface-2);
+  box-shadow:var(--ds-shadow-card);
+  text-align:center;
+}
+
+.hp-person__name{
+  margin:0 0 var(--ds-space-2xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+}
+
+.hp-person__role{
+  margin:0 0 var(--ds-space-xs);
+  font-size:var(--ds-fs-eyebrow);
+  letter-spacing:var(--ds-track-eyebrow);
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--ds-ink-soft);
+}
+
+.hp-person__cred{ margin:0; padding:0; }
+
+.hp-person__line{
+  margin:0;
+  font-size:var(--ds-fs-fine);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-closing{ margin:0; padding:0; list-style:none; display:grid; gap:var(--ds-space-sm); }
+
+.hp-closing__line{
+  margin:0;
+  max-width:var(--ds-measure);
+  font-size:var(--hp-fs-boxline);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+}
+
+/* THE MARQUEE COMPONENTS HAD NO RESPONSIVE BEHAVIOUR AT ALL, AND THAT IS NOT AN OVERSIGHT
+   IN THE COPY — brand-card-bespoke.css contains ZERO @media rules end to end (counted, not
+   skimmed), so the tier those grids came from was never taken below desktop. .hp-routes is
+   a 6-track grid with items spanning 2, which on a 375px phone is three ~100px columns; the
+   first build after the graft failed G-OVERLAP with a route line painting on top of its
+   neighbour. Strictly additive max-width queries, so the desktop composition is untouched.
+   Two steps rather than one: the 6-track grid halves to two-up before it goes single. */
+@media (max-width:900px){
+  .hp-people{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .hp-routes > li,
+  .hp-routes > li:nth-child(n+4){ grid-column:span 3; }
+}
+
+@media (max-width:640px){
+  .hp-people{ grid-template-columns:1fr; }
+  .hp-routes{ grid-template-columns:1fr; }
+  .hp-routes > li,
+  .hp-routes > li:nth-child(n+4){ grid-column:1 / -1; }
+}

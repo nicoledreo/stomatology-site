@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alder Grove Dental - TEMPLATE BUILD.
+
+  The URLs below are the GitHub Pages preview addresses, which is where these six pages
+  actually live. A sitemap has to name the location a page is really served from, so this
+  file is rewritten the day the site moves to a real domain; it is not a wish.
+
+  Note the deliberate contradiction with robots.txt, which disallows crawling: this file
+  exists because the publish gate requires it and because it is the accurate inventory of
+  the six pages, not because the pages should be indexed. They should not be, and every
+  page carries a noindex meta saying so. The two files disagree on purpose and the
+  disagreement is resolved in the direction of NOT indexing a practice that does not exist.
+
+  Six pages, matching the closed page list. No priority and no changefreq values: both are
+  ignored by every major engine and inventing them would be decoration.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/index.html</loc>
+  </url>
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/services.html</loc>
+  </url>
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/about.html</loc>
+  </url>
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/team.html</loc>
+  </url>
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/faq.html</loc>
+  </url>
+  <url>
+    <loc>https://nicoledreo.github.io/stomatology-site/contact.html</loc>
+  </url>
+</urlset>
