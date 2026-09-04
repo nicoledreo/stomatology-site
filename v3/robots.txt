@@ -1,0 +1,23 @@
+# Alder Grove Dental - TEMPLATE BUILD, NOT A REAL PRACTICE'S WEBSITE.
+#
+# Crawling is disallowed on purpose, and the reason is honesty rather than caution.
+# Every business value on this site is a placeholder: the practice name, the town, the
+# street address, the telephone number, the email address, the opening hours, the three
+# staff names and the four service names. None of it describes a real business.
+#
+# A search engine that indexed these pages would publish a dental practice that does not
+# exist, at an address that does not exist, with a telephone number nobody answers. Every
+# page also carries <meta name="robots" content="noindex"> for the crawlers that read the
+# page rather than this file.
+#
+# BEFORE THIS SITE LAUNCHES AS A REAL PRACTICE'S WEBSITE, three things happen together:
+#   1. every swap: marker in the build is filled with the owner's real value,
+#   2. the noindex meta comes off all six pages,
+#   3. the Disallow below becomes Allow and the Sitemap line points at the real domain.
+# Doing any one of them without the others either hides a finished site or publishes a
+# fabricated one.
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://nicoledreo.github.io/stomatology-site/sitemap.xml

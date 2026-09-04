@@ -1,0 +1,1657 @@
+/* brand-card-standard.css , the STANDARD tier. Loaded ON TOP of
+   stomatology-structural.css; this is what an ordinary page gets.
+
+   Contents: the control primitive (.hp-go and its two variants), the shared focus
+   ring, the copy plate and the panel, and the section label. Token-pure like the
+   structural sheet: zero hex, colour only through var(--*).
+
+   Lifted verbatim from feel-specimen.html. The .hp-go base rule was already
+   byte-identical on every page that carries a button (four of six; the about and
+   contact pages define no button because they use none), which is why it belongs to
+   a tier rather than to a page. */
+
+
+/* ============================================================================
+   THE CONTROL
+   one button, one height, one minimum width, on every page that has one.
+   The focus ring is a separate rule on purpose: it is shared with every other
+   focusable element, and it is never removed, only restyled.
+   ============================================================================ */
+
+.hp-go{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:184px;
+  height:48px;
+  padding:0 var(--ds-space-md);
+  border-radius:var(--ds-r-control);
+  border:1px solid transparent;
+  font-family:var(--ds-font-body);
+  font-size:var(--ds-fs-body);
+  font-weight:500;
+  line-height:1;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+  background-clip:padding-box;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    border-color     var(--ds-dur) var(--ds-ease),
+    color            var(--ds-dur) var(--ds-ease),
+    transform        var(--ds-dur) var(--ds-ease-out);
+}
+
+.hp-go--solid{
+  background-color:var(--ds-accent);
+  border-color:var(--ds-accent);
+  color:var(--ds-ink-on-dark);
+}
+
+.hp-go--solid:hover{ background-color:var(--ds-accent-deep); border-color:var(--ds-accent-deep); transform:translate3d(0,-2px,0); }
+
+.surface-dark .hp-go--solid:hover{ background-color:var(--ds-accent-light); border-color:var(--ds-accent-light); }
+
+.hp-go--quiet{
+  background-color:transparent;
+  border-color:var(--ds-line);
+  color:var(--ds-ink);
+}
+
+.hp-go--quiet:hover{ background-color:var(--ds-accent-soft); border-color:var(--ds-accent); transform:translate3d(0,-2px,0); }
+
+.hp-go:active{ transform:translate3d(0,0,0); }
+
+.hp-link:hover::after,
+.hp-link:focus-visible::after{ transform:scaleX(1); }
+
+.hp-go:focus-visible,
+.hp-link:focus-visible,
+.hp-route:focus-visible,
+.hp-q:focus-visible,
+.hp-tel:focus-visible{
+  outline:2px solid var(--ds-accent);
+  outline-offset:3px;
+  border-radius:var(--ds-r-control);
+}
+
+.hp-label{
+  position:relative;
+  background-color:var(--ds-bg-surface-2);
+  border-bottom:var(--ds-divider-h) solid var(--ds-line);
+  padding:var(--ds-space-lg) var(--hp-gutter);
+  box-shadow:var(--hp-shadow-box);
+}
+
+.hp-label__inner{ position:relative; z-index:3; max-width:var(--ds-container-max); margin:0 auto; }
+
+.hp-label__note--faces{
+  max-width:var(--ds-measure);
+  margin:0 0 var(--ds-space-lg);
+  padding:var(--ds-space-sm) var(--ds-space-md);
+  border-left:3px solid var(--ds-accent-ink);
+  border-radius:var(--ds-r-control);
+  background-color:var(--ds-bg-surface);
+  box-shadow:var(--hp-shadow-box);
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  font-weight:500;
+  color:var(--ds-ink);
+}
+
+/* ============================================================================
+   THE PAGE COMPONENT LAYER, folded in 2026-09-02, ONE SOURCE PER CLASS.
+
+   These classes lived inline inside the owner-approved page designs and existed in
+   no linked sheet, so an assembled page shipped those regions unstyled.
+
+   A first attempt folded them from all six designs at once. Each design carries its
+   own version of the shared components, so the sheet gained 18 competing .hp-tel
+   rules; some set a vertical padding the others compensated for, the telephone link
+   rendered a 49px box around a 25px line, and the overlap gate refused two pages.
+   A class is now claimed by the FIRST source that defines it and every later source
+   is ignored for that class, state and pseudo variants included.
+
+   Ownership: page-services.html (17), page-about.html (5), page-team.html (7)
+   ============================================================================ */
+
+.hp-ground--paper{
+  background-color:var(--ds-bg-surface);
+  background-image:
+    radial-gradient(120% 92% at 12% 0%, var(--hp-wash-c) 0%, transparent 58%),
+    linear-gradient(180deg,
+      var(--ds-bg-surface)    0%,
+      var(--ds-bg-surface-2) 52%,
+      var(--hp-ground-low)  100%);
+}
+
+.hp-ground--paper2{
+  background-color:var(--ds-bg-surface-2);
+  background-image:
+    radial-gradient(120% 92% at 88% 0%, var(--hp-wash-b) 0%, transparent 56%),
+    linear-gradient(180deg,
+      var(--hp-ground-low)    0%,
+      var(--ds-bg-surface-2) 48%,
+      var(--ds-bg-surface)  100%);
+}
+
+.hp-band:not(.hp-band--hero) .hp-h2,
+.hp-band:not(.hp-band--hero) .hp-lead,
+.hp-band:not(.hp-band--hero) .hp-wedge,
+.hp-band:not(.hp-band--hero) .hp-closing__line{ margin-left:auto; margin-right:auto; }
+
+.hp-band:not(.hp-band--hero) .hp-gorow{ display:flex; justify-content:center; }
+
+.hp-ground--paperphoto .hp-photo__scrim{
+  background-image:none;
+  background-color:var(--hp-paper-veil);
+}
+
+.hp-ground--paperphoto .hp-photo__edge{
+  background-image:linear-gradient(180deg,
+    var(--ds-bg-surface) 0%,
+    transparent         12%,
+    transparent         88%,
+    var(--ds-bg-surface) 100%);
+}
+
+.hp-band--photoband .hp-ground{ display:flex; flex-direction:column; justify-content:center; }
+
+.hp-band--photoband .hp-wrap{ width:100%; }
+
+.hp-h1,
+.hp-h2,
+.hp-service__name,
+.hp-rail__label{ text-wrap:balance; }
+
+.hp-lead,
+.hp-wedge,
+.hp-service__line,
+.hp-rail__line,
+.hp-closing__line,
+.hp-label__note{ text-wrap:pretty; }
+
+.hp-h1{
+  margin:0 0 var(--ds-space-md);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-display, var(--ds-fs-display));
+  line-height:var(--ds-lh-display);
+  letter-spacing:var(--ds-track-display);
+  font-weight:var(--ds-weight-display);
+  color:var(--ds-ink-heading);
+  max-width:none;
+}
+
+.hp-ground--paperphoto .hp-key{
+  color:var(--ds-accent-deep);
+  -webkit-text-fill-color:var(--ds-accent-deep);
+  background-image:linear-gradient(96deg, var(--ds-ink) 0%, var(--ds-accent-deep) 100%);
+}
+
+.hp-gorow{ margin-top:var(--ds-space-lg); }
+
+.hp-rail:focus-visible{
+  outline:2px solid var(--ds-accent);
+  outline-offset:4px;
+  border-radius:var(--ds-r-surface);
+}
+
+.hp-panel{
+  max-width:840px;
+  margin:0 auto;
+  padding:var(--ds-space-xl) var(--ds-space-lg);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-bg-surface);
+  background-image:linear-gradient(180deg, var(--ds-bg-surface) 0%, var(--ds-primary-soft) 100%);
+  box-shadow:var(--hp-shadow-box);
+}
+
+/* Typed as p.hp-wedge rather than .hp-wedge, and the reason is the ch. G8's A3 check flags a
+   `max-width:<n>ch` on any selector it cannot see as either a display-font element or a reading
+   paragraph, because `ch` resolves against the element's OWN font and a body-font wrapper carrying
+   a hero measure computes two to three times too wide. This is the second case, not the defect:
+   all eight instances in the build are <p> (counted, not assumed), and 52ch is a reading measure.
+   Naming the tag says so in the selector and puts the rule inside A3's own paragraph exemption. */
+p.hp-wedge{
+  margin:0;
+  max-width:52ch;
+  font-size:var(--hp-fs-boxline);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+}
+
+.hp-service__name{
+  margin:0 0 var(--ds-space-xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-on-dark);
+}
+
+.hp-service__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-on-dark);
+}
+
+.surface-dark .hp-service__name,
+.surface-dark .hp-service__line{ color:var(--ds-ink); }
+
+.hp-rail{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  height:100%;
+  padding-top:var(--ds-space-sm);
+  border-top:var(--ds-divider-h) solid var(--ds-line);
+  text-decoration:none;
+  
+  color:var(--ds-ink);
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-rail:hover{ transform:translate3d(0,-6px,0); border-top-color:var(--ds-accent); }
+
+.hp-rail__label{
+  margin:0 0 var(--ds-space-xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+}
+
+.hp-rail__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-rail__spacer{ flex:1 1 auto; order:-1; }
+
+.hp-channel{ margin:0; }
+
+.hp-plate{
+  position:relative;
+  z-index:3;
+  max-width:880px;
+  margin:0 auto;
+  padding:var(--ds-space-xl) var(--ds-space-lg);
+  border-radius:var(--ds-r-surface);
+}
+
+.hp-plate--paper{
+  background-color:var(--hp-paper-plate);
+  background-image:linear-gradient(160deg,
+    color-mix(in srgb, var(--ds-bg-surface) 0%, transparent) 0%,
+    var(--hp-plate-tint) 100%);
+  box-shadow:var(--hp-shadow-box);
+}
+
+.hero,
+.company-story,
+.the-why,
+.team-values,
+.opening-hours{ scroll-margin-block-start:var(--ds-space-lg); }
+
+.hero-persona-outcome,
+.persona-pillars,
+.capability-deep-dive,
+.ecosystem-block,
+.faq,
+.pricing-fit,
+.asking-for-someone{ position:relative; }
+
+/* ============================================================================
+   THE INLINE LINK BASE LAYER, lifted 2026-09-02 at QA.
+
+   WHY IT WAS MISSING. The component fold treated a class as "already defined" if
+   ANY rule mentioned it. .hp-tel and .hp-link are mentioned in the focus-visible
+   outline rule above, so the fold skipped them wholesale and their BASE rules were
+   never carried across. The result: three inline link classes with state rules and
+   no resting style, which is invisible to a "is this class defined" check and very
+   visible on screen. They fell through to the browser's own unvisited-link blue,
+   rgb(0,0,238), measured at 1.87:1 on the navy routing band of the services page
+   and at 9.4:1 but plainly off-brand inside the panel on the home page. The dangling
+   .hp-link:hover::after above had no base ::after to animate, so the underline
+   sweep did nothing anywhere.
+
+   Every rule below is LIFTED VERBATIM: .hp-link from the approved feel specimen,
+   .hp-tel and .hp-mail from the approved contact design. The two rules those sources
+   carry that already exist above, the focus-visible outline and the .hp-link hover
+   sweep, are deliberately NOT repeated. That is the one-source-per-class discipline
+   the earlier fold broke when it produced 18 competing .hp-tel rules.
+
+   colour:var(--ds-ink) and var(--ds-accent-ink) are both surface-aware: the tokens
+   sheet re-declares each under .surface-dark, so these read correctly on a light
+   band and on a dark one without a per-page override.
+   ============================================================================ */
+
+.hp-link{
+  position:relative;
+  color:var(--ds-accent-ink);
+  text-decoration:underline;
+  text-decoration-color:var(--ds-line);
+  text-decoration-thickness:1px;
+  text-underline-offset:5px;
+  transition:color var(--ds-dur) var(--ds-ease);
+}
+
+.hp-link::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-5px;
+  height:2px;
+  background-color:currentColor;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-link:hover{ color:var(--ds-accent-deep); }
+
+.surface-dark .hp-link:hover{ color:var(--ds-accent-light); }
+
+.hp-tel,
+.hp-mail{
+  position:relative;
+  color:var(--ds-ink);
+  text-decoration:underline;
+  text-decoration-color:var(--ds-line);
+  text-decoration-thickness:1px;
+  text-underline-offset:5px;
+  transition:color var(--ds-dur) var(--ds-ease);
+}
+
+.hp-tel::after,
+.hp-mail::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-5px;
+  height:2px;
+  background-color:currentColor;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-tel:hover::after,
+.hp-tel:focus-visible::after,
+.hp-mail:hover::after,
+.hp-mail:focus-visible::after{ transform:scaleX(1); }
+
+.hp-tel:hover,
+.hp-mail:hover{ color:var(--ds-accent-deep); }
+
+.surface-dark .hp-tel:hover,
+.surface-dark .hp-mail:hover{ color:var(--ds-accent-light); }
+
+/* SCOPED, and the scope is the point. The approved design gives the number a
+   touch target only inside a fact box or a channel row. An earlier fold carried
+   this same padding on a BARE .hp-tel, which put a 49px box around a 25px line on
+   every page and made the overlap gate refuse two of them. */
+.hp-fact .hp-tel,
+.hp-fact .hp-mail,
+.hp-channel .hp-tel,
+.hp-channel .hp-mail{
+  display:inline-block;
+  padding:12px 0;
+  font-size:var(--hp-fs-boxline);
+}
+
+.hp-fact .hp-tel::after,
+.hp-fact .hp-mail::after,
+.hp-channel .hp-tel::after,
+.hp-channel .hp-mail::after{ bottom:6px; }
+
+/* ===========================================================================
+   THE MARQUEE COMPONENT LAYER — moved here from brand-card-bespoke.css, because
+   NO PAGE LOADS THAT SHEET.
+
+   build.mjs gives each page exactly ONE tier sheet: brand-card-bespoke.css when
+   its slug appears in client-rules.bespoke_pages, brand-card-standard.css
+   otherwise. That array is EMPTY in this build's _handoff/client-rules.json, so
+   all six pages link the standard sheet and the bespoke sheet is dead on disk —
+   grep for it across pages/ returns no <link> on any page. The sitemap does mark
+   index bespoke:true, but build.mjs reads the rules array and not the sitemap,
+   so nothing carried that across the seam.
+
+   The cost was measured per page against its OWN linked sheets, not against a
+   merge of everything in _design/ — merging is what hid it. team.html used 11
+   classes that no sheet it links defines and services.html used 4. On team that
+   is the entire staff roster and the routes band: the roster rendered as a raw
+   <ul> with bullets and centred text where three cards belong. Confirmed by eye
+   in a render before this rule existed, not inferred from the grep.
+
+   Switching those two pages to the bespoke tier instead was measured and
+   REJECTED: team also needs 9 classes and services 20 that live only in the
+   standard sheet, so either sheet alone leaves a page half-styled. The two tiers
+   share just 2 class names; they are disjoint sets, not variants. Editing the
+   seam to populate bespoke_pages is not available either — _handoff/ is
+   checksummed and the build must never write it.
+
+   So the components move to the sheet every page actually loads. They are
+   copied verbatim except for the colour correction noted below.
+   =========================================================================== */
+
+.hp-service{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:clamp(260px, 30svh, 340px);
+  padding:var(--ds-space-lg) var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-primary-deep);
+  box-shadow:var(--ds-shadow-card);
+}
+
+/* The card backdrop. .hp-cardphoto is an <img width="1024" height="576"> and carried NO rule
+   in either tier sheet, so it laid out in normal flow at its intrinsic ratio: the photo sat
+   ABOVE the copy in a tall box instead of behind it, and each card measured 740px. That is
+   what pushed the services "The work we do" band to 1.78 viewports and tripped G-DENSITY.
+   With the fill declared, the same band is 0.72vh and its text density goes 140.8 -> 312.9. */
+.hp-cardphoto{
+  position:absolute; inset:0; z-index:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* The card recurses the forced grammar so its copy has a wrapper; that wrapper has to be
+   lifted above the scrim explicitly or the scrim paints over the words. */
+.hp-service > .container{ position:relative; z-index:2; }
+
+/* The scrim had position and z-index but NO background, so it darkened nothing and the card
+   titles sat white-on-photo. Measured on the rendered pixels rather than judged: the worst
+   card ("Crowns and bridges", over a sunlit wall) read 5.12:1 bare and 12.53:1 with this
+   gradient; its body line went 8.99 -> 15.75. Bottom-weighted, because that is where the
+   copy sits — the top of the photograph stays open. Same two tokens the band-level scrim
+   uses at structural :178, so the two treatments cannot drift apart. */
+.hp-cardscrim{
+  position:absolute; inset:0; z-index:1; display:block;
+  background-image:linear-gradient(180deg,
+    var(--hp-ink-open)      0%,
+    var(--hp-ink-open)     30%,
+    var(--hp-ink-plateau)  76%,
+    var(--hp-ink-plateau) 100%);
+}
+
+.hp-routes{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-routes > li{ grid-column:span 2; }
+
+.hp-routes > li:nth-child(n+4){ grid-column:span 3; }
+
+.hp-route .hp-cardphoto{
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-route:hover .hp-cardphoto{ transform:scale(1.06); }
+
+.hp-route__body{ position:relative; z-index:2; }
+
+/* THE ONE DEVIATION FROM THE BESPOKE ORIGINAL, AND IT IS A CORRECTION.
+   Both of these carried color:var(--ds-ink-on-dark) in the bespoke sheet. That
+   token is an INVERSION, not "ink for a dark surface": at :root it is white, for
+   a dark chip sitting on a light page, and .surface-dark FLIPS it to the navy so
+   a light chip on a dark page still reads. It was right in the bespoke sheet
+   because a bespoke route card sits on .hp-cardphoto, a photo backdrop that is
+   its own dark surface. team.html is the only page in this build using
+   .hp-route__label / .hp-route__line — counted, not assumed — and its cards carry
+   no .hp-cardphoto, so the band is the plain light ground. Copied unchanged, the
+   labels rendered white on white; the first render after the graft showed exactly
+   that. --ds-ink and --ds-ink-soft are the surface-AWARE roles and are correct on
+   either ground. If a photo-backed route card is ever added, it needs the
+   inversion back, scoped to that card. */
+.hp-route__label{
+  margin:0 0 var(--ds-space-2xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink);
+}
+
+.hp-route__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-people{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-person{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-bg-surface-2);
+  box-shadow:var(--ds-shadow-card);
+  text-align:center;
+}
+
+.hp-person__name{
+  margin:0 0 var(--ds-space-2xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+}
+
+.hp-person__role{
+  margin:0 0 var(--ds-space-xs);
+  font-size:var(--ds-fs-eyebrow);
+  letter-spacing:var(--ds-track-eyebrow);
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--ds-ink-soft);
+}
+
+.hp-person__cred{ margin:0; padding:0; }
+
+.hp-person__line{
+  margin:0;
+  font-size:var(--ds-fs-fine);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-closing{ margin:0; padding:0; list-style:none; display:grid; gap:var(--ds-space-sm); }
+
+.hp-closing__line{
+  margin:0;
+  max-width:var(--ds-measure);
+  font-size:var(--hp-fs-boxline);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+}
+
+/* THE MARQUEE COMPONENTS HAD NO RESPONSIVE BEHAVIOUR AT ALL, AND THAT IS NOT AN OVERSIGHT
+   IN THE COPY — brand-card-bespoke.css contains ZERO @media rules end to end (counted, not
+   skimmed), so the tier those grids came from was never taken below desktop. .hp-routes is
+   a 6-track grid with items spanning 2, which on a 375px phone is three ~100px columns; the
+   first build after the graft failed G-OVERLAP with a route line painting on top of its
+   neighbour. Strictly additive max-width queries, so the desktop composition is untouched.
+   Two steps rather than one: the 6-track grid halves to two-up before it goes single. */
+@media (max-width:900px){
+  .hp-people{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .hp-routes > li,
+  .hp-routes > li:nth-child(n+4){ grid-column:span 3; }
+}
+
+@media (max-width:640px){
+  .hp-people{ grid-template-columns:1fr; }
+  .hp-routes{ grid-template-columns:1fr; }
+  .hp-routes > li,
+  .hp-routes > li:nth-child(n+4){ grid-column:1 / -1; }
+}
+
+/* ============================================================================
+   brand-card-standard.css ADDENDUM , THE APPROVED PAGE LEVEL LAYER.
+
+   PROVENANCE. Every rule below is carried VERBATIM from _design/feel-specimen.html,
+   the homepage design the owner confirmed on 2026-09-01 after sixteen revisions plus
+   one further revision (card photographs at full colour under a bottom-up scrim only).
+   Nothing here is authored fresh.
+
+   WHY IT HAD TO BE CARRIED. The SYSTEM stamp records that structural.css took ONLY
+   the rules already byte identical across all six approved page designs, and that a
+   rule differing on even one page was left page level. The page level layer was then
+   never written into the build: the per type templates used the approved designs, in
+   their own words, for visual LANGUAGE only, never the bespoke skeleton. Measured
+   against the linked sheets, the approved homepage uses 107 classes and 50 of them
+   were defined nowhere the built page could see. Those 50 are the photo cards, the
+   card mosaics, the numbered timeline, the circular portraits, the floating fact
+   panel and the three ground veils. That is the whole of what went flat.
+
+   THIRTEEN TOKENS CAME WITH THEM and they are not decoration either:
+   --hp-fs-display is clamp(42px, 5.2vw, 72px), and without it the hero h1 rendered at
+   the h2 step. The six --hp-ink-* veils and the two --hp-paper-* steps are the
+   background treatment the owner revised and approved.
+   WHY IT LIVES HERE RATHER THAN IN pages/index.css. verify-no-orphan-classes resolves
+   classes against _design/*.css ONLY, because those are the sheets the assembled page
+   links; a per page sheet is invisible to it and a class defined only there reads as an
+   orphan. It is also the right home on the merits: the same vocabulary appears across the
+   other five approved page designs, so restoring those needs it loaded site wide too.
+   ============================================================================ */
+
+:root{
+  --hp-ink-veil: color-mix(in srgb, var(--ds-primary-deep) 34%, transparent);
+  --hp-ink-plate: color-mix(in srgb, var(--ds-primary-deep) 86%, transparent);
+  --hp-ink-card: color-mix(in srgb, var(--ds-primary-deep) 86%, transparent);
+  --hp-ink-find: color-mix(in srgb, var(--ds-primary-deep) 84%, transparent);
+  --hp-ink-route: color-mix(in srgb, var(--ds-primary-deep) 82%, transparent);
+  --hp-ink-lift: color-mix(in srgb, var(--ds-primary-deep) 34%, transparent);
+  --hp-portrait-size: clamp(96px, 8.6vw, 128px);
+  --hp-fs-display: clamp(42px, 5.2vw, 72px);
+  --hp-fs-stance: clamp(30px, 3.4vw, 46px);
+  --hp-fs-digit: clamp(20px, 1.8vw, 26px);
+  --hp-paper-plateau: color-mix(in srgb, var(--ds-bg-surface) 82%, transparent);
+  --hp-paper-open: color-mix(in srgb, var(--ds-bg-surface) 24%, transparent);
+  --hp-dur-draw: 760ms;
+}
+
+.hp-band:not(.hp-band--hero) .hp-h2,
+.hp-band:not(.hp-band--hero) .hp-lead,
+.hp-band:not(.hp-band--hero) .hp-stance,
+.hp-band:not(.hp-band--hero) .hp-closing__line,
+.hp-band:not(.hp-band--hero) .hp-find__line,
+.hp-band:not(.hp-band--hero) .hp-step__line{ margin-left:auto; margin-right:auto; }
+
+.hp-band:not(.hp-band--hero) .hp-btnrow{ justify-content:center; }
+
+/* THE TWO CENTRE-JUSTIFIED PHOTOGRAPHIC BANDS (8 and 12) DROP THE RAMP ENTIRELY.
+   A horizontal ramp guarantees contrast for a column pinned to the left gutter. The
+   owner centred every band except the hero, and a centred column sits in the middle
+   of the band, which is where a left-to-right ramp is mid-fall. Rather than widen
+   the plateau until it covers the whole band (which erases the photograph, the
+   failure this file already recorded once at 88 percent paper), these two bands take
+   a LIGHT flat veil so the room reads, and their copy sits on a PLATE that carries
+   its own flat scrim. The guarantee moves from geometry to the plate, where it is
+   total: every pixel of the plate carries the plate's alpha. */
+.hp-ground--ink.hp-ground--veil .hp-photo__scrim{
+  background-image:none;
+  background-color:var(--hp-ink-veil);
+}
+
+.hp-ground--paperphoto.hp-ground--paperveil .hp-photo__scrim{
+  background-image:none;
+  background-color:var(--hp-paper-veil);
+}
+
+/* ============================================================================
+   TYPE. TYPOGRAPHY-PAIRINGS.md #1 (Inter with Inter, one family), which is the
+   catalogue entry the locked direction lands on and which the token sheet already
+   records. Hierarchy is bought with size, weight, tracking and measure, never with
+   a paler ink over a photograph.
+   ============================================================================ */
+.hp-eyebrow{
+  margin:0 0 var(--ds-space-sm);
+  font-size:var(--ds-fs-eyebrow);
+  letter-spacing:var(--ds-track-eyebrow);
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--ds-accent-ink);
+}
+
+.hp-ground--ink .hp-eyebrow{ color:var(--ds-accent-light); }
+
+/* ---- THE CUT OF WORDS. A STANDING RULE, NOT A ONE-OFF. -----------------------
+   The owner: "be mindful of the CUT OF WORDS. place words with the same contexts in
+   the same line, avoid awkward cuts like I've always said."
+   THREE INSTRUMENTS, AND THEY DO DIFFERENT JOBS. They are listed here once and used
+   everywhere, so a heading added later inherits the rule rather than needing it
+   remembered.
+     1. text-wrap:balance on EVERY heading. The browser evens the line lengths
+        across a heading's whole block, which is what stops a five-word heading
+        breaking after word four and leaving one word alone on line two. It is
+        limited by spec to short blocks, which is exactly what a heading is.
+     2. text-wrap:pretty on body copy. Same family, different target: it works the
+        LAST lines of a paragraph and is what removes the single-word orphan.
+     3. A non-breaking bind for pairs neither of the above can protect, because
+        balance and pretty choose WHERE to break, and some pairs must have NO break
+        available at all. Two mechanisms, chosen by what the string is:
+          - &nbsp; where this page OWNS the string (the headings, the eyebrow, the
+            address, the telephone, the affordance label).
+          - .hp-nb, a nowrap span, where the string is a SHARED CARRIER that another
+            page renders byte-for-byte (the four service lines, the three staff
+            lines). A span changes the markup and leaves the TEXT bytes identical,
+            so the sibling pages still match; an &nbsp; would silently desynchronise
+            them, which is the defect the shared-marker family exists to prevent.
+   The heading line counts this produced were MEASURED at 1440, 1024, 768 and 390,
+   not estimated; the table is in the head comment. */
+.hp-h1,
+.hp-h2,
+.hp-h3,
+.hp-stance,
+.hp-service__name,
+.hp-route__label,
+.hp-flow__label,
+.hp-person__name,
+.hp-q{ text-wrap:balance; }
+
+.hp-lead,
+.hp-find__line,
+.hp-step__line,
+.hp-service__line,
+.hp-route__line,
+.hp-flow__line,
+.hp-person__line,
+.hp-note,
+.hp-closing__line,
+.hp-label__note{ text-wrap:pretty; }
+
+.hp-tel,
+.hp-hours__day,
+.hp-hours__time,
+.hp-street{ white-space:nowrap; }
+
+.hp-btnrow{ display:flex; flex-wrap:wrap; gap:var(--ds-space-sm); margin-top:var(--ds-space-lg); }
+
+/* ============================================================================
+   SECTION 2. Four non-interactive service panels.
+   pick: SECTION-COMPONENTS.md #10 (Services 4-col compact) + CARD-VARIATIONS.md #3
+   (Minimal 3-up icon-top feature, taken WITHOUT its icon) | considered:
+   SECTION-COMPONENTS.md #9 services 3-col, CARD-VARIATIONS.md #4 circle-icon
+   service card with arrow link | why: the brief renders exactly four names, so #10
+   is the entry that fits the count without padding it; #9 would leave a hole or
+   force a fifth service the owner has not ruled on. #4 is refused twice: item 6
+   bans the icon set, and the brief is explicit that these four blocks "MUST NOT
+   carry cursor: pointer, a hover elevation, a hover translate, a hover
+   border-colour change or any other pressable-reading hover state", because
+   "a card styled as clickable that is not is a broken affordance". CARD-VARIATIONS
+   #3 is cited for its chrome only, minus the icon it is named for. The beauty
+   reason: four bounded panels with no affordance at all, sitting under a single
+   real button, make the ONE interactive thing in the band unmistakable.
+   THESE PANELS HAVE NO HOVER STATE AND NO POINTER CURSOR. That is deliberate. */
+.hp-services{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.hp-cardphoto--service{ object-position:50% 40%; }
+
+.hp-cardphoto--find{    object-position:50% 50%; }
+
+.hp-cardphoto--route{   object-position:50% 44%; }
+
+/* CARD SCRIMS, rebuilt 2026-09-01 to the owner's brief: "make them in full colour / opacity, then
+   add gradients from the bottom where the texts are in, slowly fading to the centre, so it will
+   remain readable."
+
+   WHAT CHANGED AND WHY IT MATTERS. Each of these previously set a FLAT background-color of 82 to 86
+   percent ink across the WHOLE card, with a gradient merely layered on top. That flat wash is what
+   drained the photographs: it dimmed the top of every card where no text sits at all. It is now
+   deleted outright, not reduced. The ONLY thing between the eye and the photograph is the ramp below,
+   and above 72 percent height there is nothing at all.
+
+   READABILITY IS MEASURED, NOT ASSUMED. Worst case for white text is a PURE WHITE pixel behind the
+   scrim, since no pixel is brighter than white. Compositing #0B1A2B over white at alpha a and taking
+   the WCAG ratio for white text gives:
+       alpha 0.90 -> 13.25:1     alpha 0.80 -> 9.35:1      alpha 0.70 -> 6.53:1
+       alpha 0.60 ->  4.64:1     alpha 0.55 -> 3.95:1 (large text only)
+   The text sits in the bottom band where alpha is 0.80 or higher, so its FLOOR is 9.35:1 against the
+   brightest backdrop physically possible. Against a realistic mid-grey it is 13.71:1.
+   The route cards carry a third line (the action label), so their text band is taller and their ramp
+   clears later, at 78 percent rather than 72. */
+.hp-cardscrim--service,
+.hp-cardscrim--find{
+  background-image:linear-gradient(to top,
+    color-mix(in srgb, var(--ds-primary-deep) 90%, transparent)  0%,
+    color-mix(in srgb, var(--ds-primary-deep) 80%, transparent) 22%,
+    color-mix(in srgb, var(--ds-primary-deep) 52%, transparent) 40%,
+    color-mix(in srgb, var(--ds-primary-deep) 20%, transparent) 58%,
+    transparent 72%);
+}
+
+.hp-cardscrim--route{
+  background-image:linear-gradient(to top,
+    color-mix(in srgb, var(--ds-primary-deep) 90%, transparent)  0%,
+    color-mix(in srgb, var(--ds-primary-deep) 82%, transparent) 28%,
+    color-mix(in srgb, var(--ds-primary-deep) 54%, transparent) 46%,
+    color-mix(in srgb, var(--ds-primary-deep) 20%, transparent) 64%,
+    transparent 78%);
+}
+
+.hp-service__body{ position:relative; z-index:2; }
+
+/* ---- THE IMAGE WELL IS GONE, and its absence is a CONSEQUENCE rather than a
+   preference. visual-direction.md section 9 gave every image "a full width well
+   inside its band, with a 1px Rule hairline around it", and item 3's amendment kept
+   that treatment for any image that is NOT a band ground. The owner's items 5, 7
+   and 14 turn EVERY remaining image on this page into a ground: four service-card
+   grounds, three box grounds, five route-card grounds, two band grounds and the
+   hero. There is no image left that is not a ground, so the kept LIMIT has no
+   subject any more. It is not violated; it has nothing to apply to.
+   The .hp-figure / .hp-figure__img / .hp-media rules are DELETED rather than left
+   unused, so a later pass cannot reintroduce a well by inheriting a rule nobody
+   meant to keep.
+   ALSO DELETED: the full-bleed instruments band that sat under the four service
+   panels. The owner: "remove the big out of place image below it with the dental
+   tools." Its markup, its figure and its swap:image-services-preview marker are all
+   gone. That is a DECLARED brief slot that has stopped rendering, so it is
+   reconciled at the IMAGERY DECISION LEDGER rather than left to be discovered. */
+
+/* ============================================================================
+   SECTION 3. A photographic triptych: image above, hairline, one sentence below.
+   pick: CARD-VARIATIONS.md #17 (Article preview card, the STACKED variant) |
+   considered: SECTION-COMPONENTS.md #11 (Service pillars 2-col with image),
+   SECTION-COMPONENTS.md #13 bento feature grid | why: #11 WAS the first pick and
+   it was WRONG, and the reason is recorded rather than quietly overwritten. #11 is
+   "each row = image + headline + body + link, alternating image side" and it
+   assumes a paragraph beside the image. This section renders ONE SENTENCE of about
+   fifty characters per row, so a facing column left roughly 260px of dead ground in
+   every row and the band read UNFINISHED at 1270px tall. That is the exact
+   impression the owner's re-scope exists to remove, so it was a defect and not a
+   taste note. #17's stacked variant is "Image at the top of the card (full card
+   width) ... Headline ... 3-up grid, all cards same height", which is the shape
+   that fits one sentence under one photograph with nothing left over. #13 is still
+   refused: a bento grid ranks its cells by size, and these three partition the site
+   rather than ranking it.
+   The beauty reason, and it is the reason the asymmetry survived the change: the
+   middle column DROPS by one --ds-space-xl, which is the "one bento / offset-grid
+   moment" _MODERN-WOW-SPEC section 6 asks for, spent in the one band that has three
+   equal things to say. The zig-zag the rejected pick bought with dead space is
+   bought here with a 64px offset instead.
+   ============================================================================ */
+/* The hairline over each sentence is SURFACE-PATTERNS.md #27 (Hairline-full-width)
+   | considered: SURFACE-PATTERNS.md #26 (None / pure-spacing), SURFACE-PATTERNS.md
+   #29 (Motif-divider) | why: #26 is what the rejected first pass did, and a
+   sentence with nothing above it is what made it read as a floating caption; #29 is
+   decoration and item 6 forecloses the motif family. #27's rationale is "a single
+   hairline that runs edge-to-edge is the architectural-restraint marker", and using
+   the SAME hairline in sections 3, 4 and 6 makes it one page-wide device rather
+   than three unrelated ideas. */
+/* ---- THE THREE BOXES, side by side. The owner: "WHAT YOU CAME TO FIND: the text
+   seems floating and too small. just place the text INSIDE the box, add gradients,
+   and make the images the BACKGROUND of each box. STACK THE 3 BOXES SIDE BY SIDE."
+   WITHDRAWN with the shape: the 64px middle-column DROP that used to be this band's
+   asymmetry (the "one bento / offset-grid moment" _MODERN-WOW-SPEC section 6 asks
+   for). "Side by side" means three equal columns on one baseline, and an offset
+   third column is the one thing that is not that. The offset is removed rather than
+   reduced, and .hp-row--drop goes with it.
+   WHY THE SENTENCE READS AS FLOATING IN THE OLD SHAPE, which is the defect the owner
+   is naming: the sentence sat OUTSIDE the photograph under a hairline, so the eye
+   read a picture and then, separately, a caption. Putting it inside the box on the
+   photograph's own ground makes one object out of two.
+   NOT A LINK, and that is deliberate. These three boxes describe what the reader
+   will find; the five ROUTE cards at band 5 are what they click. Nothing here
+   carries a pointer, a lift or an action label. */
+.hp-finds{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:var(--ds-space-md);
+  align-items:stretch;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.hp-find{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:clamp(320px, 42svh, 480px);
+  padding:var(--ds-space-lg) var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-primary-deep);
+  box-shadow:var(--ds-shadow-card);
+}
+
+.hp-find__body{ position:relative; z-index:2; }
+
+.hp-find__line{
+  margin:0;
+  max-width:26ch;
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-boxline);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-body);
+  color:var(--ds-ink-on-dark);
+}
+
+/* ============================================================================
+   SECTION 4. Three numbered steps.
+   pick: SECTION-COMPONENTS.md #27 (Numbered process steps 1-2-3-4) | considered:
+   SECTION-COMPONENTS.md #28 process timeline horizontal, SECTION-COMPONENTS.md #7
+   problem framing | why: #27 is "3-6 numbered cards, each = step number + title +
+   1-2 sentence description", and the brief renders exactly three sentences about
+   what an appointment involves. #28 wants a connector line, which is an icon-family
+   decision item 6 forecloses. #7 frames a problem, and a problem frame on a dental
+   homepage is the fear register refusal 5 of the brief bars outright. The beauty
+   reason: an oversized numeral in the accent is the one place _MODERN-WOW-SPEC
+   section 4 ("Oversized numerals") can be spent without a statistic, because a step
+   number counts nothing about this practice.
+   ============================================================================ */
+/* ---- THE MOVING TIMELINE. The owner: "WHAT AN APPOINTMENT INVOLVES: make this a
+   MOVING TIMELINE, add the DIGITS INSIDE ICONS, and add animations that make the
+   steps APPEAR ONE BY ONE."
+   REVISED pick: SECTION-COMPONENTS.md #28 (Process timeline horizontal) |
+   previously: SECTION-COMPONENTS.md #27 (Numbered process steps) | why the pick
+   changed: #28 was REFUSED on the last pass for exactly one reason, recorded at the
+   time as "#28 wants a connector line, which is an icon-family decision item 6
+   forecloses". Item 6 has since been amended for precisely this element ("the owner
+   asked for the timeline digits to sit inside icons"), and the owner has now asked
+   for the connector by name. The reason the refusal rested on is gone, so the
+   refusal goes with it. #27 no longer fits: it is a static numbered list and the
+   owner asked for movement.
+   THE ICON IS THE NARROWEST THING THAT SATISFIES THE RELEASE: a circle containing a
+   digit. No chevron, no arrow, no line icon beside a heading, no pictogram row.
+   Those four stay banned by the unamended remainder of item 6 and none of them
+   appears anywhere in this file. The circle uses --ds-r-pill, which item 5 reserves
+   for the monogram avatar; the medallion joins the monogram as the second member of
+   that reservation, and there is still no pill CONTROL on the page.
+   THE RAIL DRAWS ITSELF between the medallions, from the left, once the band is in
+   view. It is decorative and carries aria-hidden, because the reading order 1, 2, 3
+   is already carried by the <ol>.
+   WHITE ON NEAR-WHITE, so these are among the boxes the drop-shadow release is FOR:
+   a --ds-bg-surface card on the --ds-bg-surface-2 band, separation that the hairline
+   alone was carrying. */
+/* ---- THE GEOMETRY IS DECLARED ONCE, ON ONE ELEMENT, AND READ BY BOTH THE GRID AND
+   THE RAIL. The grid gap and the medallion diameter are the two numbers the rail's
+   own left/width arithmetic depends on, so if either lived somewhere else the rail
+   could drift off the circles the day that value stepped at a breakpoint.
+   ALL THREE ARE DECLARED ON .hp-tl AND CONSUMED ON .hp-tl, or on a descendant that
+   inherits the already-substituted value. Nothing here mixes a token against a
+   surface colour, so nothing here needs a dark-flip redeclaration; if a colour ever
+   joins this list it does, and it must be verified by reading getComputedStyle on a
+   rendered element rather than by reading this sheet. */
+.hp-tl{
+  --hp-tl-gap:var(--ds-space-lg);
+  --hp-tl-icon:72px;
+  --hp-tl-rail:3px;
+  --hp-stagger:260ms;        /* the steps appear ONE BY ONE, not as a group */
+  position:relative;
+}
+
+.hp-timeline{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:var(--hp-tl-gap);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+/* THE RAIL IS A LAYER, NOT A LIST ITEM. It is a sibling of the <ol> rather than a
+   child of it, for two reasons that both matter: an <ol> may only contain <li>, and
+   the rail has to measure itself against the WHOLE grid rather than against one
+   step. It is aria-hidden and carries no text, because the reading order 1, 2, 3 is
+   already carried by the <ol>. pointer-events:none, so a rail lying over a card can
+   never swallow a hover meant for the card underneath it. */
+.hp-tl__rail{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+
+/* A SEGMENT IS A TRACK PLUS A FILL. The track is the unlit hairline that shows where
+   the line is GOING; the fill is the accent that draws along it. Two elements rather
+   than one, because a rail that is simply absent until it animates reads as a
+   rendering fault, and because the drawn fraction only means something against a
+   whole. */
+.hp-tl__seg{
+  position:absolute;
+  /* the vertical centre of a medallion: the card's own top padding plus half of the
+     circle, minus half the rail's own thickness. Every term is a declared value. */
+  top:calc(var(--ds-space-lg) + var(--hp-tl-icon) / 2 - var(--hp-tl-rail) / 2);
+  height:var(--hp-tl-rail);
+  border-radius:var(--ds-r-pill);
+  background-color:var(--ds-line);
+  overflow:hidden;
+  transform-origin:center center;
+  transition:transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+/* A column is (100% minus two gaps) / 3 and the centre-to-centre stride is a column
+   plus a gap. The segment starts half a column plus half a medallion in, and runs
+   one stride minus a whole medallion, so it begins and ends at the circles' EDGES
+   and never crosses one. Written out longhand rather than aliased into a derived
+   custom property: a custom property is substituted on the element that declares it,
+   and writing the arithmetic where it is used removes that question entirely. */
+.hp-tl__seg--1{
+  left:calc((100% - 2 * var(--hp-tl-gap)) / 6 + var(--hp-tl-icon) / 2);
+  width:calc((100% - 2 * var(--hp-tl-gap)) / 3 + var(--hp-tl-gap) - var(--hp-tl-icon));
+}
+
+.hp-tl__seg--2{
+  left:calc((100% - 2 * var(--hp-tl-gap)) / 6 + var(--hp-tl-icon) / 2
+            + (100% - 2 * var(--hp-tl-gap)) / 3 + var(--hp-tl-gap));
+  width:calc((100% - 2 * var(--hp-tl-gap)) / 3 + var(--hp-tl-gap) - var(--hp-tl-icon));
+}
+
+.hp-tl__fill{
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  /* the draw runs left to right, which is the reading direction of a horizontal
+     timeline. The 768 block turns this to center top with the rail. */
+  transform-origin:left center;
+  background-image:linear-gradient(90deg,
+    var(--ds-accent-soft) 0%,
+    var(--ds-accent)     45%,
+    var(--ds-accent-deep) 100%);
+}
+
+/* THE RAIL ANSWERS THE STEP IN FRONT OF IT. Engaging a step thickens the segment
+   LEAVING it, which is the one thing a process diagram can say that a static line
+   cannot: this is what happens next. Additive only. A browser without :has() shows
+   the rail at its resting thickness and loses nothing else. */
+.hp-tl:has(.hp-step:nth-child(1):hover) .hp-tl__seg--1,
+.hp-tl:has(.hp-step:nth-child(1):focus) .hp-tl__seg--1,
+.hp-tl:has(.hp-step:nth-child(2):hover) .hp-tl__seg--2,
+.hp-tl:has(.hp-step:nth-child(2):focus) .hp-tl__seg--2{
+  transform:scaleY(1.9);
+}
+
+/* THE STEP IS A SHELL AND THE CARD IS INSIDE IT, and that split is load-bearing
+   rather than tidy. The shell carries .hp-reveal, whose transition is opacity and
+   transform over --hp-dur-reveal with a per-step delay. If the hover lift lived on
+   the same element it would inherit that 620ms duration and up to half a second of
+   delay, so a step would answer a pointer half a second late. The card is a separate
+   element with a separate, short transition, and the two never share a property. */
+.hp-step{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  border-radius:var(--ds-r-surface);
+}
+
+/* THE FOCUS RING. The step is a tab stop (see the markup note on tabindex), so it
+   needs a ring, and this file removes a focus outline nowhere. The ring is drawn on
+   the shell, which has no padding of its own, so it sits exactly around the card. */
+.hp-step:focus-visible{
+  outline:3px solid var(--ds-accent-deep);
+  outline-offset:4px;
+}
+
+.hp-step__card{
+  flex:1 1 auto;
+  padding:var(--ds-space-lg) var(--ds-space-md);
+  border-radius:var(--ds-r-surface);
+  background-color:var(--ds-bg-surface);
+  background-image:linear-gradient(180deg, var(--ds-bg-surface) 0%, var(--ds-primary-soft) 100%);
+  box-shadow:var(--hp-shadow-box);
+  transition:
+    transform  var(--ds-dur-slow) var(--ds-ease-out),
+    box-shadow var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-tl__icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:var(--hp-tl-icon);
+  height:var(--hp-tl-icon);
+  margin:0 auto var(--ds-space-md);
+  border-radius:var(--ds-r-pill);
+  background-color:var(--ds-bg-surface);
+  background-image:radial-gradient(120% 120% at 50% 0%, var(--ds-accent-soft) 0%, var(--ds-bg-surface) 78%);
+  box-shadow:var(--hp-shadow-box);
+  transition:
+    transform  var(--ds-dur-slow) var(--ds-ease-out),
+    box-shadow var(--ds-dur-slow) var(--ds-ease-out),
+    background-color var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-tl__n{
+  font-family:var(--ds-font-display);
+  font-size:var(--hp-fs-digit);
+  line-height:1;
+  letter-spacing:var(--ds-track-display);
+  font-weight:var(--ds-weight-display);
+  color:var(--ds-accent-ink);
+  font-variant-numeric:tabular-nums;
+  transition:color var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-step__line{
+  margin:0;
+  max-width:34ch;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+  transition:
+    color     var(--ds-dur-slow) var(--ds-ease-out),
+    transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+/* ---- THE INTERACTION. The owner: "make it INTERACTIVE, not merely animated."
+   ONE STATE, TWO WAYS IN. Every rule below names :hover and :focus in the same
+   selector list, so a keyboard reader gets the identical state a pointer gets, and
+   the ring above stays on top of it. Nothing here is carried by colour alone: the
+   step that comes forward MOVES, its medallion GROWS, and its line SHIFTS, so a
+   reader who cannot separate the two blues still sees which step is engaged.
+   THE RECEDE NEVER COSTS LEGIBILITY. A receded line goes to --ds-ink-soft, which is
+   5.06:1 on the band surface, not to a reduced opacity, because a step that steps
+   back is still a step somebody may be reading.
+   pick: MOTION-PATTERNS.md #10 (Lift) for the card, #2 (Color-shift) for the
+   medallion | considered: MOTION-PATTERNS.md #9 (None, luxury silence) | why: #9 is
+   the correct answer for a card that goes nowhere and the wrong one for the element
+   the owner asked to be shown. No bounce and no overshoot: --ds-ease-out does not
+   pass its endpoint. */
+.hp-timeline:hover .hp-step__card,
+.hp-timeline:focus-within .hp-step__card{
+  transform:scale(.985);
+  box-shadow:var(--ds-shadow-card);
+}
+
+.hp-timeline:hover .hp-tl__icon,
+.hp-timeline:focus-within .hp-tl__icon{ transform:scale(.94); }
+
+.hp-timeline:hover .hp-step__line,
+.hp-timeline:focus-within .hp-step__line{ color:var(--ds-ink-soft); }
+
+.hp-timeline:hover .hp-step:hover .hp-step__card,
+.hp-timeline:focus-within .hp-step:focus .hp-step__card{
+  transform:translateY(-5px);
+  box-shadow:var(--hp-shadow-box-hi);
+}
+
+.hp-timeline:hover .hp-step:hover .hp-tl__icon,
+.hp-timeline:focus-within .hp-step:focus .hp-tl__icon{
+  transform:scale(1.1);
+  background-color:var(--ds-accent-deep);
+  background-image:radial-gradient(120% 120% at 50% 0%, var(--ds-accent) 0%, var(--ds-accent-deep) 82%);
+  box-shadow:var(--hp-shadow-box-hi), var(--ds-glow);
+}
+
+.hp-timeline:hover .hp-step:hover .hp-tl__n,
+.hp-timeline:focus-within .hp-step:focus .hp-tl__n{ color:var(--ds-ink-on-dark); }
+
+.hp-timeline:hover .hp-step:hover .hp-step__line,
+.hp-timeline:focus-within .hp-step:focus .hp-step__line{
+  color:var(--ds-ink);
+  transform:translateY(-2px);
+}
+
+/* THE ACTION LABEL IS GONE. The owner: "I do not like the OPEN THIS PAGE CTAs on
+   every box, it is already given. REMOVE THOSE COMPLETELY ACROSS ALL PAGES and move
+   down the text on top, if there is any."
+   FIVE labels removed from this file, and the .hp-route__go rule and its hover rule
+   were DELETED with them rather than left behind, because a CSS rule whose class no
+   longer appears in any markup is an orphan the next reader has to re-derive.
+   THE CARD STILL READS AS CLICKABLE, and that is a requirement rather than a hope.
+   Three affordances survive the removal, and none of them was the label:
+     1. the WHOLE CARD is the <a>, so the entire 300px target is the link;
+     2. the HOVER MOVES: translate3d on the card plus a scale on the photograph. It
+        is not a colour change, which is item 11's requirement and not manners;
+     3. the FOCUS RING is declared in the shared focus rule with every other control
+        and is not touched here.
+   THE TEXT MOVED DOWN BY ITSELF, and that is why nothing else changed: .hp-route is
+   justify-content:flex-end, so the body block was already anchored to the card floor
+   and simply drops by the height of the removed label. There is no hole to close. */
+
+/* ============================================================================
+   CARD TEXT COLOUR, DECLARED ONCE FOR BOTH BAND POLARITIES. A REAL TRAP, CAUGHT BY
+   READING THE LOCKED SHEET RATHER THAN BY LOOKING AT A RENDER.
+   Every photographic card on this page is DARK, because every one of them carries
+   an ink scrim. Its text must therefore be paper on both kinds of band. But the two
+   obvious tokens each flip:
+     --ds-ink-on-dark is #FFFFFF at :root and #0B1A2B inside .surface-dark
+     --ds-ink         is #0B1A2B at :root and #FFFFFF inside .surface-dark
+   They are exact opposites, which is the point of the flip and is correct for
+   ordinary band copy. A card that is dark REGARDLESS of its band needs the one that
+   is white in the scope it happens to be in, so each polarity names its own token
+   explicitly. Band 2's service cards sit on a LIGHT band and take --ds-ink-on-dark;
+   bands 3 and 5 are .surface-dark, so their cards take --ds-ink. Written as a pair
+   rather than as one clever token, because there is no non-flipping paper role in
+   the locked sheet and inventing one here would be authoring a colour.
+   If a card family is ever moved to a band of the other polarity, it is already
+   covered: both rules name every card family. */
+.hp-service__name,
+.hp-service__line,
+.hp-find__line,
+/* THE APPROVED PAIR, RESTORED VERBATIM. I briefly overrode this with a photo-scoped
+   rule and it was wrong: --ds-ink-on-dark is an INVERSION, so on a dark band it resolves
+   DARK, and forcing it there painted the routing cards dark on a dark photograph. The
+   approved pair is already complete, because it yields white on BOTH grounds: at :root
+   ink-on-dark is white, for a photo backed card on a light page, and under .surface-dark
+   the sibling rule below switches to --ds-ink, which is white there. Measured after the
+   revert rather than reasoned: the built home route cards read white again. */
+.hp-route__label,
+.hp-route__line{ color:var(--ds-ink-on-dark); }
+
+.surface-dark .hp-service__name,
+.surface-dark .hp-service__line,
+.surface-dark .hp-find__line,
+.surface-dark .hp-route__label,
+.surface-dark .hp-route__line{ color:var(--ds-ink); }
+
+/* ============================================================================
+   SECTION 6. Two flows, four routes.
+   pick: SECTION-COMPONENTS.md #50 (Topic columns) | considered:
+   SECTION-COMPONENTS.md #28 process timeline horizontal, SECTION-COMPONENTS.md #45
+   category chips | why: the brief renders two flows, each a label, a line and two
+   routes, which is two topic columns and nothing more. #28 would draw a connector
+   implying an order the brief refuses to assert. #45 renders chips, and a chip row
+   with four routes reads as filters rather than as destinations. The beauty reason:
+   two columns with the shared button component under each keeps the page's ONE
+   control shape doing the routing, so the fourth interactive treatment on the page
+   is still the first one.
+   ============================================================================ */
+.hp-flows{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:var(--ds-space-xl);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-flow{ padding-top:var(--ds-space-sm); border-top:var(--ds-divider-h) solid var(--ds-line); }
+
+.hp-flow__label{
+  margin:0 0 var(--ds-space-xs);
+  font-family:var(--ds-font-display);
+  font-size:var(--ds-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+}
+
+.hp-flow__line{
+  margin:0;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink-soft);
+}
+
+.hp-flow__steps{ display:flex; flex-wrap:wrap; gap:var(--ds-space-sm); margin-top:var(--ds-space-md); }
+
+/* THE GENERATED PORTRAIT. Item 8's third-note release, and the single element on
+   this site that carries a human face. Sized from a clamp rather than a fixed pixel
+   so the circle scales with the card at every step of the ladder, and carrying the
+   same shadow recipe as every other lifted surface.
+   IT IS A FRAME AND AN IMAGE, NOT ONE <img>, AND THAT IS A RENDER FINDING RATHER
+   THAN A PREFERENCE. This rule used to be a bare <img> with object-position:50% 24%
+   on it. The sources are 1024 by 1024 SQUARES and the circle is a square box, so
+   object-fit:cover has nothing left over to crop and object-position moves NOTHING.
+   The declaration read as a considered crop and was a no-op: the three faces
+   rendered small and off centre, and one of them sat with its hairline against the
+   top of the circle. A frame with overflow:hidden and an image that scales and pans
+   inside it is the only way to actually choose what the circle holds.
+   THE THREE VALUES ARE PER IMAGE AND ARE TUNED IN THE RENDER, not derived from the
+   file name. --hp-p-z is how far in; --hp-p-x and --hp-p-y carry the frame's centre
+   onto the FACE's centre, and each is simply 50% minus where that face sits in its
+   own square. They are declared INLINE beside each portrait, so a value and the
+   picture it belongs to cannot drift apart, and so the same face keeps the same crop
+   on both pages that show it. */
+.hp-portrait{
+  display:block;
+  position:relative;
+  width:var(--hp-portrait-size);
+  height:var(--hp-portrait-size);
+  margin:0 auto var(--ds-space-md);
+  border-radius:var(--ds-r-pill);
+  overflow:hidden;
+  background-color:var(--ds-bg-surface-2);
+  box-shadow:var(--hp-shadow-box);
+}
+
+.hp-portrait__img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transform-origin:center center;
+  transform:scale(var(--hp-p-z, 1.5)) translate(var(--hp-p-x, 0%), var(--hp-p-y, 0%));
+}
+
+.hp-plate--ink{
+  background-color:var(--hp-ink-plate);
+  background-image:linear-gradient(160deg,
+    color-mix(in srgb, var(--ds-primary-deep) 0%, transparent) 0%,
+    var(--hp-ink-mid) 100%);
+}
+
+.hp-facts{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:var(--ds-space-lg);
+  margin:0; padding:0;
+}
+
+.hp-fact__label{
+  margin:0 0 var(--ds-space-xs);
+  font-size:var(--ds-fs-eyebrow);
+  letter-spacing:var(--ds-track-eyebrow);
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--ds-ink-soft);
+}
+
+.hp-addr{
+  margin:0;
+  font-style:normal;
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+}
+
+/* A street number and its street name are one address line and must never break
+   between them, which is the owner's "a number and its unit" case exactly. */
+.hp-street{ display:inline-block; }
+
+.hp-hours{ margin:0; }
+
+.hp-hours__row{
+  display:flex;
+  justify-content:space-between;
+  gap:var(--ds-space-md);
+  padding:var(--ds-space-2xs) 0;
+  border-bottom:var(--ds-divider-h) solid var(--ds-line);
+}
+
+.hp-hours__day{ color:var(--ds-ink); }
+
+.hp-hours__time{ color:var(--ds-ink); font-variant-numeric:tabular-nums; }
+
+/* ============================================================================
+   SECTION 9. Three lines that route a question and assert nothing about a building.
+   pick: SECTION-COMPONENTS.md #8 (Manifesto / belief statement) | considered:
+   SECTION-COMPONENTS.md #15 comparison table (us vs them), SECTION-COMPONENTS.md
+   #34 FAQ accordion | why: the registry calls this slot compare-teaser and #15 is
+   what that name reaches for; it is refused three times over (no comparative or
+   implied category claim, no naming a competitor, and the dossiers are held for
+   category norms only), so the slot ships as no comparison at all. #34 is the next
+   section's shape and repeating it here would be the adjacency defect. #8 is a
+   plain statement band, which is what three routing sentences actually are. The
+   beauty reason: three short lines set at reading measure on the quietest ground on
+   the page is the visual rest the composition needs before its last dark run.
+   ============================================================================ */
+.hp-notes{ margin:0; padding:0; list-style:none; display:grid; gap:var(--ds-space-md); }
+
+.hp-note{
+  margin:0;
+  max-width:var(--ds-measure);
+  font-size:var(--ds-fs-body);
+  line-height:var(--ds-lh-body);
+  color:var(--ds-ink);
+  padding-left:var(--ds-space-md);
+  /* --ds-line (#E3E8EE) on the band surface (#F4F6F8) rendered as a rule nobody
+     could see. Measured by looking: 1.09:1 against its own ground. The rule is the
+     quiet ink instead, which is a locked token and reads as structure without
+     reading as an accent. */
+  border-left:2px solid var(--ds-ink-soft);
+}
+
+/* ============================================================================
+   SECTION 10. Six questions, each linking to its answer.
+   pick: SECTION-COMPONENTS.md #35 (FAQ grouped) | considered:
+   SECTION-COMPONENTS.md #34 FAQ accordion, SECTION-COMPONENTS.md #31 pricing 3-tier
+   | why: the registry calls this slot pricing-teaser and #31 is what that name
+   reaches for; no figure, range, currency mark or plan word may reach this page, so
+   there is no tier to render. #34 would put the answers here, and the brief renders
+   the QUESTIONS only, so that a swapper never has two copies of an answer to
+   reconcile. #35 is an index of questions that live elsewhere, which is exactly
+   this. The beauty reason: a two-column ruled index reads as a table of contents,
+   which is the one thing on a homepage a reader settling questions is actually
+   looking for.
+   ============================================================================ */
+.hp-qs{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:0 var(--ds-space-xl);
+  margin:0; padding:0;
+  list-style:none;
+}
+
+.hp-qitem{ border-bottom:var(--ds-divider-h) solid var(--ds-line); }
+
+/* ============================================================================
+   SECTION 11. One sentence.
+   pick: SECTION-COMPONENTS.md #57 (Quote / pull-quote standalone) | considered:
+   SECTION-COMPONENTS.md #8 manifesto, SECTION-COMPONENTS.md #26 pull-quote section
+   | why: #57's role is "break the rhythm with a single ... When: anywhere
+   transitions feel mechanical and need a pause", which is precisely what a
+   one-sentence band between an index and a closing view is for. It is rendered as a
+   plain paragraph and NOT as a quotation, because nobody said it; the pattern is
+   borrowed for its SCALE, not for its quotation marks. #8 is section 9's pick and
+   reusing it adjacent to itself would flatten both. #26 sets a pull-quote inside a
+   longer text, and there is no longer text. The beauty reason: one line set at
+   heading scale on the page's brightest ground is the only moment of pure air in
+   the composition.
+   ============================================================================ */
+/* The stance line is the PAYLOAD of this band and the h2 above it is the label.
+   The first pass set both at --ds-fs-h2, which rendered as two headings stacked at
+   the same weight and gave the band no hierarchy at all. The sentence takes the
+   display scale, which item 2's amendment permits and which the locked sheet still
+   caps at 40px. The ch measure sits on this element, and this element carries the
+   display font, so the ch resolves against the face that is actually rendering it. */
+.hp-stance{
+  margin:0;
+  max-width:24ch;
+  font-family:var(--ds-font-display);
+  font-size:var(--ds-fs-display);
+  letter-spacing:var(--ds-track-display);
+  line-height:var(--ds-lh-display);
+  font-weight:var(--ds-weight-display);
+  color:var(--ds-ink-heading);
+}
+
+/* ---- the line that draws itself -------------------------------------------
+   pick: MOTION-PATTERNS.md #26 (Fade-in-on-view) as the TRIGGER, with a scaleX draw
+   as the payload | considered: MOTION-PATTERNS.md #25 (None), an SVG
+   stroke-dashoffset draw | why: the owner asked for a connecting line that draws
+   between the steps. A stroke-dashoffset draw would need an SVG, and the owner has
+   just had every SVG on this page removed for being curved; a scaleX on a gradient
+   bar is the same effect with no new element family. It animates TRANSFORM only, so
+   it cannot reflow while it runs.
+   THE RESTING STATE IS THE DRAWN STATE. .hp-draw carries no hidden start state of
+   its own: the collapsed state is applied ONLY under .hp-js, which only script can
+   add, so with JavaScript disabled the rail renders at full width immediately.
+   scaleX(1) is the identity transform, which is why the reduced-motion block below
+   can force the finished state with a plain transform:none.
+   TWO BUGS WERE FOUND HERE AND BOTH ARE FIXED, so neither can come back quietly:
+     1. THE OBSERVER NEVER SAW THIS FAMILY. The script below selected .hp-reveal
+        only, so .hp-in was never added to a .hp-draw element and the rail sat at
+        scaleX(0) forever. The rail was not slow, it was INVISIBLE, on every render.
+        The selector now reads '.hp-reveal, .hp-draw', and so does the safety net.
+     2. THE REDUCED-MOTION BLOCK DID NOT COVER IT. The comment above claimed the
+        block forced the finished state; the block never named .hp-draw. A reader
+        with prefers-reduced-motion got a section with no rail in it. The block now
+        names it, and the claim is verified by emulating the query and reading the
+        computed transform rather than by reading this comment.
+   THE DELAY IS THE STEP STAGGER, NOT A CONSTANT. Each fill carries the --hp-i of the
+   step it leaves, so segment 1 draws behind step 1 and segment 2 behind step 2: the
+   line travels from step to step instead of appearing all at once. */
+.hp-js .hp-draw{
+  transform:scaleX(0);
+  transition:transform var(--hp-dur-draw) var(--ds-ease-out);
+  transition-delay:calc(var(--hp-i, 0) * var(--hp-stagger) + var(--hp-dur-reveal) / 2);
+}
+
+.hp-js .hp-draw.hp-in{ transform:scaleX(1); }
+
+/* ============================================================================
+   REDUCED MOTION. THE REQUIREMENT IS NOT "LESS MOTION", IT IS "FINAL VISIBLE
+   STATE". A reveal that starts at opacity 0 and never fires leaves the page blank
+   for the reader who asked for less motion, which is worse than no animation at
+   all. So this block does two separate things and both are necessary:
+     1. it neutralises duration everywhere, and
+     2. it explicitly FORCES the end state of every element that has a hidden or
+        offset start state, so nothing can rest anywhere but visible.
+   _MODERN-WOW-SPEC section 2 carries the same instruction in its own heading:
+   "Motion and micro-interactions (always respect prefers-reduced-motion)", and
+   MOTION-PATTERNS.md #26's own Responsive note is explicit that "under
+   prefers-reduced-motion the reveal is skipped and content renders fully visible".
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:1ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:1ms !important;
+    transition-delay:0s !important;
+    scroll-behavior:auto !important;
+  }
+  html{ scroll-behavior:auto !important; }
+  .hp-rise{
+    opacity:1 !important;
+    transform:none !important;
+    animation:none !important;
+  }
+  .hp-js .hp-reveal,
+  .hp-reveal{
+    opacity:1 !important;
+    transform:none !important;
+    transition:none !important;
+    transition-delay:0s !important;
+  }
+  /* THE RAIL, FULLY DRAWN. This is the rule the comment above the .hp-draw family
+     used to CLAIM existed and did not. transform:none is the identity transform,
+     which is scaleX(1) on desktop and scaleY(1) in the 768 block, so the segment is
+     at full length on both axes without either axis being named here. Without this
+     rule a reader who asked for less motion got a timeline with no line in it, which
+     is not less motion, it is a missing section. */
+  .hp-js .hp-draw,
+  .hp-draw{
+    transform:none !important;
+    transition:none !important;
+    transition-delay:0s !important;
+  }
+  .hp-band--hero .hp-photo__img,
+  .hp-photo__img{
+    animation:none !important;
+    transform:scale(1.04) !important;
+  }
+  .hp-link::after,
+  .hp-tel::after{ transition:none !important; }
+}
+
+@media (max-width:1024px){
+  :root{
+    --hp-gutter:calc(var(--ds-space-lg) + var(--ds-space-xs));
+    --hp-py:calc(var(--ds-space-xl) + var(--ds-space-xs));
+  }
+  .hp-services{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .hp-routes{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .hp-routes > li,
+  .hp-routes > li:nth-child(n+4){ grid-column:auto; }
+  .hp-finds{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--ds-space-sm); }
+}
+
+@media (max-width:768px){
+  :root{
+    --hp-gutter:calc(var(--ds-space-md) + var(--ds-space-xs));
+    --hp-py:calc(var(--ds-space-xl) - var(--ds-space-xs));
+  }
+  /* BELOW 768 the text uses the full band width, so the scrim ramp is DROPPED and
+     the flat plateau covers every pixel. The worst-case figures in the CONTRAST
+     LEDGER then hold across the whole frame rather than only inside a geometric
+     text zone. The photograph is re-anchored so its subject stays in frame at the
+     tighter crop, which is the edge case HERO-COMPOSITIONS.md #5 names. */
+  .hp-ground--ink .hp-photo__scrim{
+    background-image:none;
+    background-color:var(--hp-ink-plateau);
+  }
+  .hp-ground--paperphoto .hp-photo__scrim{
+    background-image:none;
+    background-color:var(--hp-paper-plateau);
+  }
+  .hp-textzone{ max-width:none; }
+  .hp-photo__img{ object-position:46% 46%; }
+  .hp-band--hero .hp-ground{ min-height:clamp(500px, 76vh, 660px); }
+  .hp-band--photoband .hp-ground--ink{ min-height:clamp(440px, 64vh, 580px); }
+  .hp-band--photoband .hp-ground--paperphoto{ min-height:clamp(380px, 50vh, 500px); }
+  .hp-finds{ grid-template-columns:1fr; gap:var(--ds-space-md); }
+  .hp-find{ min-height:clamp(240px, 34vh, 320px); }
+  .hp-service{ min-height:clamp(220px, 30vh, 300px); }
+  /* THE TIMELINE GOES VERTICAL. One column of steps, and the rail turns with them:
+     it runs down the CENTRE of the stack BEHIND the cards, so the drawn line shows
+     in the gaps between them and the connection still reads. The draw axis turns
+     with it, from scaleX off the left edge to scaleY off the top, which is the
+     direction a vertical timeline is read in.
+     ONE SEGMENT RATHER THAN TWO, and this is a limit rather than a preference: the
+     stacked cards are content-height, and a per-gap segment would have to know those
+     heights to place itself. Segment 2 is switched off and segment 1 becomes the
+     whole rail. The gap value is redeclared on .hp-tl, the same element that
+     declares it above, so the rail arithmetic and the grid step together. */
+  .hp-tl{ --hp-tl-gap:var(--ds-space-md); }
+  .hp-timeline{ grid-template-columns:1fr; }
+  .hp-tl__rail{ z-index:0; }
+  .hp-tl__seg--1,
+  .hp-tl__seg--2{
+    left:50%;
+    right:auto;
+    top:0;
+    bottom:0;
+    width:var(--hp-tl-rail);
+    height:auto;
+    margin-left:calc(var(--hp-tl-rail) / -2);
+  }
+  .hp-tl__seg--2{ display:none; }
+  .hp-tl__fill{
+    transform-origin:center top;
+    background-image:linear-gradient(180deg,
+      var(--ds-accent-soft) 0%,
+      var(--ds-accent)     45%,
+      var(--ds-accent-deep) 100%);
+  }
+  .hp-js .hp-draw{ transform:scaleY(0); }
+  .hp-js .hp-draw.hp-in{ transform:scaleY(1); }
+  .hp-people{ grid-template-columns:1fr; }
+  .hp-flows{ grid-template-columns:1fr; gap:var(--ds-space-lg); }
+  .hp-facts{ grid-template-columns:1fr; gap:var(--ds-space-md); }
+  .hp-qs{ grid-template-columns:1fr; }
+  .hp-h1{ max-width:none; }
+  .hp-h2{ max-width:none; }
+  .hp-stance{ max-width:none; }
+  .hp-go{ width:100%; }
+}
+
+@media (max-width:390px){
+  :root{
+    --hp-gutter:calc(var(--ds-space-md) - var(--ds-space-2xs));
+    --hp-py:var(--ds-space-lg);
+  }
+  .hp-services{ grid-template-columns:1fr; }
+  .hp-routes{ grid-template-columns:1fr; }
+  .hp-route{ min-height:clamp(240px, 36vh, 320px); }
+  .hp-label{ padding:var(--ds-space-md) var(--hp-gutter); }
+}
+
+/* THE QUESTIONS BAND LINK, carried from the approved homepage. Verbatim. */
+.hp-q{
+  display:block;
+  padding:var(--ds-space-md) 0;
+  font-family:var(--ds-font-display);
+  font-size:var(--ds-fs-h3);
+  line-height:var(--ds-lh-head);
+  font-weight:var(--ds-weight-head);
+  color:var(--ds-ink-heading);
+  text-decoration:none;
+  transition:color var(--ds-dur) var(--ds-ease), transform var(--ds-dur-slow) var(--ds-ease-out);
+}
+
+.hp-q:hover{ color:var(--ds-accent-ink); transform:translate3d(6px,0,0); }
+
+.surface-dark .hp-q:hover{ color:var(--ds-accent-light); }
+
+/* A ROUTE CARD WITH NO PHOTOGRAPH BEHIND IT. The approved compositions never produce
+   one: every route card in the approved homepage carries .hp-cardphoto--route, counted at
+   6, and the approved TEAM page does not use route cards at all, counted at 0. The BUILT
+   team page invented the shape at P12, on hp-ground--grad, which is not a dark surface, so
+   the pair above resolves --ds-ink-on-dark to white and paints the labels white on a light
+   band. rverify measured 1.03:1 on four of them.
+   :not(:has()) states the actual condition rather than guessing at a page: a card with no
+   backdrop takes the surface aware ink. It is a safe peer for this sheet, which already
+   relies on color-mix, svh units and text-wrap. When the team page is restored to its
+   approved design this rule stops matching anything, which is the correct way for it to
+   retire. */
+.hp-route:not(:has(.hp-cardphoto)) .hp-route__label{ color:var(--ds-ink); }
+.hp-route:not(:has(.hp-cardphoto)) .hp-route__line{ color:var(--ds-ink-soft); }
