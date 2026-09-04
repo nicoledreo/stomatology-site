@@ -1734,17 +1734,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    type scale and legibility are chrome, and chrome that differs page to page is the
    defect rather than the fix. */
 @media (min-width:900px){
-  .hp-band--hero .hp-photo__img[src$="dental-hero-operatory-v3.jpg"]{
+  .hp-band--hero .hp-photo__img[src$="dental-hero-care-v3b.jpg"]{
     object-position:50% 52%;
   }
 }
 @media (max-width:899px){
-  .hp-band--hero .hp-photo__img[src$="dental-hero-operatory-v3.jpg"]{ object-position:64% 50%; }
+  .hp-band--hero .hp-photo__img[src$="dental-hero-care-v3b.jpg"]{ object-position:64% 50%; }
 }
 @media (max-width:768px){
   /* the approved sheet re-anchors every photograph to 46% 46% here; this one needs
      its own value for the same reason as above. */
-  .hp-band--hero .hp-photo__img[src$="dental-hero-operatory-v3.jpg"]{ object-position:64% 48%; }
+  .hp-band--hero .hp-photo__img[src$="dental-hero-care-v3b.jpg"]{ object-position:64% 48%; }
 }
 
 
@@ -2353,7 +2353,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
   .hp-portrait,
   .hp-portrait__img{ transition:none !important; }
   .hp-people .hp-person:hover .hp-portrait__img,
-  .hp-people .hp-person:focus-within .hp-portrait__img{ transform:scale(var(--hp-p-z, 1)) !important; }
+  .hp-people .hp-person:focus-within .hp-portrait__img{
+    transform:scale(var(--hp-p-z, 1.5)) translate(var(--hp-p-x, 0%), var(--hp-p-y, 0%)) !important;
+  }
 }
 
 
@@ -2530,4 +2532,608 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
 
 @media (max-width:768px){
   #s10-pricing-teaser .hp-qs{ grid-template-columns:1fr; gap:0; }
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 3 , the third batch.
+
+   SOURCE: "Alder Grove Dental Website Revisions (Part 3)", five sections with five
+   embedded screenshots. This batch is framed as REVIEW & CONTEXT rather than
+   TRANSCRIPTION / USER REQUEST, and it reads that way: most items ask for pacing,
+   alignment and polish rather than new composition. Where an item is a genuine
+   instruction it is implemented; where it is a check, the check was run and the
+   result is recorded in the comment rather than being silently assumed.
+
+   NO MARKUP IS TOUCHED BY PART 3.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ============================================================================
+   P3-1 , "INSIDE THE PRACTICE". 00:00-01:36
+   "Ensure clear visual separation between reception, waiting area, and treatment
+    room details" + "maintain smooth vertical pacing and typography consistency".
+
+   The three sentences were three evenly stacked lines with nothing between them, so
+   reception, the waiting area and the treatment room read as one paragraph broken
+   for line length rather than as three distinct places. A hairline between them and
+   a wider gap makes the three separations the sentence structure already implies.
+   The rule is drawn BETWEEN items only (:not(:last-child)), so the list does not end
+   on a line that closes nothing.
+   ============================================================================ */
+#s12-practice-view .hp-closing{
+  display:grid;
+  gap:0;
+}
+/* THE BOX STRETCHES, THE TEXT STAYS CENTRED, and this is the second half of the
+   separation. With the rules added but the boxes left alone, the three dividers came
+   out 334px, 480px and 480px wide: the page-wide centring block auto-margins
+   .hp-closing__line to its own content, so each rule was only as wide as the
+   sentence above it and three separators meant to read as one system read as three
+   different marks. Zeroing the auto margins for this band only makes every rule the
+   same length; text-align is inherited, so the sentences stay centred inside the
+   full-width boxes and nothing moves except the rules. */
+#s12-practice-view .hp-closing__line{
+  padding-block: var(--sp-4);
+  margin-left:0;
+  margin-right:0;
+  max-width:none;
+}
+#s12-practice-view .hp-closing__line:not(:last-child){
+  border-bottom:1px solid color-mix(in srgb, var(--ds-ink) 12%, transparent);
+}
+#s12-practice-view .hp-closing__line:first-child{ padding-top:0; }
+#s12-practice-view .hp-closing__line:last-child{ padding-bottom:0; }
+
+
+/* ============================================================================
+   P3-2 , "CALL THE PRACTICE" CLOSING BAND. 01:37-02:16
+   "Keep footer spacing balanced and align the CTA buttons neatly against the dark
+    background" + "verify telephone and booking disclaimer text wrapping across
+    different screen resolutions."
+   ============================================================================ */
+
+/* 2a. THE ACTION COLUMN IS ALIGNED AND EVEN. The two controls sized themselves to
+   their own labels, and the column began wherever the flow put it. Now they share
+   one width and the column starts at the top of the block, so the pair reads as one
+   object set against the band rather than two buttons that happen to be near
+   each other. */
+.cc-acts{
+  display:grid;
+  justify-items:stretch;
+  align-content:start;
+  gap: var(--sp-3);
+}
+.cc-acts .hp-go{
+  width:100%;
+  min-width:0;
+}
+
+/* 2b. THE DISCLAIMER, GIVEN A MEASURE AND CHECKED AT EVERY WIDTH. The owner asked
+   for the wrapping to be verified rather than assumed, so it was: the line is
+   allowed a reading measure instead of the full column width, which is what stops it
+   setting two words on a last line at the wide end, and it is left to wrap naturally
+   at the narrow end rather than being held on one line. Its contrast is raised at
+   the same time, because a placeholder notice that nobody can read is not a notice.
+   MEASURED at 1440 / 1024 / 768 / 375 after the change. */
+.cc-acts small{
+  display:block;
+  margin-top: var(--sp-2);
+  max-width: 34ch;
+  font-size: var(--text-sm);
+  line-height:1.55;
+  color: rgba(255,255,255,.72);
+  text-wrap:pretty;
+}
+
+
+/* 2c. THE BAND'S OWN SPACING, BALANCED. Measured: the closing band carries
+   123.2px of padding top and bottom, which was set when this band held more than it
+   does now. The copy column ends well above the fold of the band and the result
+   reads bottom-heavy rather than balanced, which is the owner's word for it. The
+   padding comes down to a clamp that keeps the band generous at width and stops it
+   gaping under a short column. */
+.cc-closing.precta{
+  padding-block: clamp(64px, 7vw, 96px);
+}
+
+/* ============================================================================
+   P3-3 , "THE RECORD" MASTHEAD. 02:17-03:07
+   "Ensure the footer metadata columns maintain uniform grid alignment" + "refine
+    typography contrast for placeholder notice text."
+   ============================================================================ */
+
+/* 3a. UNIFORM, AND THE COLUMN COUNT WAS ALREADY RIGHT. Checked before changing
+   anything: .cc-mast is repeat(5, 1fr), so the columns were already equal width and
+   the labels already shared a baseline. What was ragged was everything BELOW the
+   label: "Opening hours" runs four lines and "Practice and town" runs two, so the
+   five blocks ended at five different heights with nothing tying them together.
+   A rule across the top of each cell and a fixed label row give the five columns a
+   shared ceiling and a shared first line, which is the alignment the owner is
+   describing. The differing depths below that are the content's, not the grid's. */
+/* minmax(0,1fr), NOT 1fr, and the difference was visible in the measurement. A 1fr
+   track has an automatic MINIMUM of min-content, so the one unbreakable string in
+   this block , the email address , pushed its own column to 216px while the other
+   four sat at 192px. Five columns the owner asked to be uniform were not, by 24px.
+   minmax(0,1fr) removes that floor and the email is allowed to wrap instead, which
+   is the right trade in a footer: a wrapped address costs a line, an inflated track
+   costs the alignment of the whole row.
+   The sixth child is not a sixth column: .cc-mast__record already carries
+   grid-column:1 / -1 and spans the row beneath, which is intended. Checked before
+   assuming it was a wrap. */
+/* THE COLUMN COUNT IS SCOPED; THE ALIGNMENT IS NOT. Written unscoped the first time,
+   and rverify caught it on all six pages: the chrome sheet carries a full responsive
+   ladder for this block , 5 columns, then 3 below 1100, 2 below 900, 1 below 560 ,
+   and a bare .cc-mast rule in the LAST sheet the page loads outranks every step of
+   it. At 390px the masthead was still trying five columns of 50.8px, the strings
+   inside overflowed their tracks, and the document scrolled sideways to 437px on
+   every page. A five-column footer is a desktop statement; it has no business
+   surviving to a phone.
+   Only grid-template-columns needed scoping. The rest , the shared ceiling, the
+   fixed label row, the wrap behaviour , is right at every width and stays global. */
+@media (min-width:1101px){
+  .cc-mast{ grid-template-columns: repeat(5, minmax(0,1fr)); }
+}
+.cc-mast{
+  align-items:start;
+  gap: var(--sp-4) var(--sp-4);
+}
+.cc-mast__v,
+.cc-mast__v .cc-a{ overflow-wrap:anywhere; }
+
+/* THE EMAIL IS STEPPED DOWN ONE SIZE, and the number came from measuring rather than
+   taste. "hello@aldergrovedental.example" is 30 characters with no break opportunity
+   in it, and it needs 216px at 14px inside a 196.8px track, so making the tracks
+   uniform forced it to break , and with overflow-wrap:anywhere it broke mid-word, as
+   "...exam / ple". Measured at each step: 13px needs 201px (still short), 12.5px
+   needs 193px and fits. So 12.5px, which keeps every track identical AND keeps the
+   address on one line. The telephone above it stays at the full size; only the one
+   string that cannot fit is stepped.
+   overflow-wrap stays as the safety net for narrower viewports, where the column is
+   narrower still and a break is genuinely unavoidable. */
+.cc-mast__v a[href^="mailto:"]{
+  font-size:12.5px;
+  letter-spacing:0;
+}
+.cc-mast > *{
+  padding-top: var(--sp-3);
+  border-top:1px solid color-mix(in srgb, var(--ds-ink) 14%, transparent);
+}
+.cc-mast__k{
+  min-height: calc(2em * 1.3);
+  margin-bottom: var(--sp-2);
+}
+.cc-mast__v{
+  font-variant-numeric: tabular-nums;
+}
+
+/* 3b. THE PLACEHOLDER NOTICE, RAISED. Both notices are the one thing on the page a
+   reader MUST be able to read , they are what says the practice is not real , and
+   both were set in the muted ink used for supporting copy. They take the full ink
+   instead. Measured after the change rather than eyeballed. */
+.cc-foot .cc-note,
+.cc-foot__note,
+.cc-record__note{
+  color: var(--ds-ink);
+}
+
+
+/* ============================================================================
+   P3-4 , THE "WHAT WE DO" DROPDOWN. 03:08-04:22
+   "Optimize dropdown menu interactivity, hover delay, and smooth transition
+    animations" + "align navigation sub-item numbers (02.1 through 02.5) cleanly
+    with descriptive labels."
+   ============================================================================ */
+
+/* 4a. WHAT WAS ALREADY THERE, checked before adding anything: the trigger and the
+   panel share one hover scope on .cc-nav__item, a bridge pseudo-element covers the
+   seam between them, and the open state already zeroes its transition-delay. Three
+   of the four parts of hover-intent were in place.
+   THE MISSING PART IS THE CLOSE DELAY. With none, the panel begins fading the
+   instant the pointer leaves, so crossing a corner of the trigger on the way to a
+   row dismisses the menu. A short delay on the CLOSED state only, with the open
+   state's existing delay:0s left untouched, means the menu opens instantly and
+   forgives a moment of travel before it closes. */
+.cc-panel{
+  transition:
+    opacity   var(--v3-menu-out, .26s) var(--ds-ease) var(--v3-menu-delay, .18s),
+    transform var(--v3-menu-out, .26s) var(--ds-ease-out) var(--v3-menu-delay, .18s),
+    visibility 0s linear calc(var(--v3-menu-out, .26s) + var(--v3-menu-delay, .18s));
+}
+
+/* 4b. THE NUMBER RAIL. The row is a two-column grid whose first track is `auto`, so
+   the numbers align only for as long as every number is the same string width. They
+   are today (02.1 to 02.5) and they are not guaranteed to be: 02.10, or a 3-digit
+   section, silently shifts every label in the menu. A fixed track plus the tabular
+   figures the sheet already sets makes the rail hold whatever the numbers become. */
+.cc-idx__row,
+.cc-drop__item{
+  grid-template-columns: 3.4em 1fr;
+  column-gap: var(--sp-3);
+}
+
+/* the row's own hover already shifts padding-left; keeping the transition on the
+   same easing as the panel makes the two read as one piece of motion. */
+.cc-idx__row,
+.cc-drop__item{
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    padding-left var(--v3-menu-out, .26s) var(--ds-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cc-panel{ transition-duration:1ms !important; transition-delay:0s !important; }
+}
+
+
+/* ============================================================================
+   P3-5 , THE ACTIVE NAV STATE. 04:23-04:28
+   "Confirm seamless internal page routing and active state indicator highlighting
+    on navigation tabs."
+
+   CONFIRMED BROKEN, and this is the one hard defect in Part 3. The screenshot shows
+   services.html with "01 Home" still underlined, and it is not a rendering accident:
+   _chrome-block.html hardcodes class="cc-link is-active" on the Home link, and the
+   chrome block is SHARED by all six pages. Every page therefore tells the reader it
+   is the homepage. Verified on all six built pages before touching it: each carries
+   exactly one is-active and it is on Home every time.
+
+   THE FIX IS TWO HALVES. Here, the hardcoded state is neutralised for good. The
+   other half is one rule per page naming which nav item is really current, appended
+   by apply-v3-layer.mjs, because the six pages share this stylesheet's source and
+   differ only in which file they link. The applier knows the slug; the DOM carries
+   no per-page hook to key off, and inventing one would mean editing markup that
+   part 3 says nothing about.
+
+   NOT FIXED HERE, and named rather than left implied: aria-current="page" is a
+   markup attribute and cannot be set from a stylesheet, so the ACCESSIBLE current
+   state is still wrong even though the visible one is now right. That needs the
+   chrome block itself, which is shared, generated, and outside this batch's ask.
+   ============================================================================ */
+.cc-nav .cc-link.is-active .cc-link__label::after{
+  transform:scaleX(0);
+}
+
+/* P3-5 also asked that the subpage hero typography match the global tokens.
+   CHECKED, NOT CHANGED: services.html's h1 computes from --hp-fs-display, the same
+   token the home hero uses, and measured 58px at 1440 against the home page's 86px
+   purely because the home hero carries the page-index step. Both come from the
+   locked scale. Nothing to do. */
+
+
+/* ============================================================================
+   ============================================================================
+   PART 3B , THE OWNER'S ANNOTATED REVISIONS.
+
+   The Part 3 section above answered the blueprint's summary bullets. These are the
+   owner's own marked-up notes on the rendered pages, which are a different and more
+   specific list. Where the two disagree, THESE WIN, because they are the owner
+   looking at the actual build rather than a summary of a video.
+
+   Two of them reverse something written earlier in this same file, and both are
+   marked at the rule so the reversal is not mistaken for drift.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- A1. THE BAND SEAM IS TOO HARSH -------------------------------------
+   "soften the gradient transition, it is currently too harsh."
+   The photographic band fades to the page white over the first 12% of its height,
+   which at a 600px band is about 70px , short enough to read as a line rather than a
+   fade. The ramp is lengthened and given intermediate stops so it arrives rather
+   than cuts. Same treatment at the foot of the band. */
+.hp-ground--paperphoto .hp-photo__edge{
+  background-image:linear-gradient(180deg,
+    var(--ds-bg-surface)                                       0%,
+    color-mix(in srgb, var(--ds-bg-surface) 82%, transparent)  9%,
+    color-mix(in srgb, var(--ds-bg-surface) 42%, transparent) 20%,
+    transparent                                               34%,
+    transparent                                               66%,
+    color-mix(in srgb, var(--ds-bg-surface) 42%, transparent) 80%,
+    color-mix(in srgb, var(--ds-bg-surface) 82%, transparent) 91%,
+    var(--ds-bg-surface)                                     100%);
+}
+
+/* ---- A2. CLOSE THE GAP ABOVE THE PLATE -----------------------------------
+   "reduce the gap between the box and the top text so the Inside the Practice box
+    will still be seen in desktop view together with the text above."
+   The stance line above and the plate below were each carrying a full band's worth
+   of padding, so the two never shared a screen. Both sides of the seam come in. */
+#s11-stance-line .hp-wrap{ padding-bottom: clamp(28px, 3vw, 44px); }
+#s12-practice-view .hp-wrap{ padding-top: clamp(28px, 3vw, 44px); }
+@media (min-width:900px){
+  .hp-band--photoband .hp-ground--paperphoto{ min-height:clamp(400px, 46vh, 520px); }
+}
+
+
+/* ---- A3. THE ORPHANED WORD IN THE CLOSING COPY --------------------------
+   "there is no online booking should be inline."
+   It was setting as "...There is no online / booking.", stranding one word on its
+   own line. text-wrap:pretty is the property built for exactly this: it costs the
+   paragraph nothing and refuses to leave a single word on the last line. The measure
+   opens slightly at the same time so the sentence has somewhere to go. */
+.cc-closing__in p{
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+
+/* ---- A4. TOO MANY HAIRLINES IN THE MASTHEAD -----------------------------
+   "theres too much thin horizontal lines. delete the bottom lines."
+   REVERSES the per-cell rule added in P3-3 above. That rule gave each of the five
+   columns its own top border, which sat directly under the block's existing
+   full-width rule and read as a doubled, broken line. The single full-width rule the
+   chrome sheet already draws is enough, so the per-cell ones come off and the
+   padding that spaced them goes with them. */
+.cc-mast > *{
+  border-top:0;
+  padding-top:0;
+}
+
+/* ---- A5. EVEN OUT THE COLUMN SPACING -----------------------------------
+   "move telephone to the left a bit more to even out spacing. fix alignments and
+    make the texts in this footer neat."
+   Five equal tracks gave "Practice and town" the same room as "Opening hours" and
+   left a wide hole after the two short columns, which is why the telephone sat
+   further right than it looked like it should. Sizing the tracks to their content
+   and distributing the LEFTOVER space evenly between them moves the telephone left
+   and makes every gap the same, which is what "even out spacing" asks for. */
+@media (min-width:1101px){
+  .cc-mast{
+    grid-template-columns: repeat(5, auto);
+    justify-content: space-between;
+    column-gap: var(--sp-5);
+  }
+}
+.cc-mast__k{
+  min-height:0;
+  margin-bottom: var(--sp-2);
+  white-space:nowrap;
+}
+.cc-mast__v{ line-height:1.55; }
+
+
+/* ---- A6. REMOVE THE RECORD AND THE LEGAL LINE --------------------------
+   "image 4 remove these texts completely."
+   Both are hidden rather than deleted, because they live in _chrome-block.html which
+   is SHARED by all six pages and generated; hiding them here removes them from the
+   page and from the accessibility tree without editing shared markup, and restoring
+   them is one line.
+   NAMED PLAINLY, because it is the one change in this batch that removes a
+   statement rather than a style: the paragraph being hidden is the on-page notice
+   that every value on this site is a placeholder. The site is still a template and
+   still protected , build_scope is TEMPLATE, all six pages carry
+   <meta name="robots" content="noindex"> and robots.txt disallows crawling , but the
+   VISIBLE disclosure is now gone, so nothing on the rendered page tells a reader the
+   practice is not real. That is the owner's call to make and they have made it; it
+   is recorded here so it cannot be discovered later as an accident. */
+.cc-mast__record,
+.cc-foot__legal{ display:none; }
+
+
+/* ---- A7. THE GRADIENTS ARE NOT VISIBLE ---------------------------------
+   "improve the gradients in the whole site they are not visible. i want them
+    visible."
+   The Part 1 grounds were deliberately restrained because this file had once washed
+   the accent headlines down to about 1.3:1 and overcorrected. The owner has now
+   looked at the result twice and asked for more, so the amplitude roughly doubles on
+   the dark ground and rises about three-fold on the two light ones. Every figure was
+   re-measured from composited pixels afterwards rather than reasoned about. */
+.hp-ground--grad{
+  background-color:var(--ds-bg-surface);
+  background-image:
+    radial-gradient(62% 82% at 96% -8%,
+      color-mix(in srgb, var(--ds-accent) 34%, transparent) 0%,
+      color-mix(in srgb, var(--ds-accent) 12%, transparent) 40%,
+      transparent 74%),
+    radial-gradient(58% 74% at 3% 106%,
+      color-mix(in srgb, var(--ds-accent) 22%, transparent) 0%,
+      transparent 72%),
+    linear-gradient(154deg,
+      color-mix(in srgb, #FFFFFF 13%, var(--ds-bg-surface))  0%,
+      var(--hp-ground-mid)   22%,
+      var(--ds-bg-warm)      48%,
+      var(--hp-ground-low)   74%,
+      color-mix(in srgb, #000000 34%, var(--ds-bg-surface)) 100%);
+}
+.hp-ground--paper{
+  background-color:#FFFFFF;
+  background-image:
+    radial-gradient(64% 78% at 94% -6%,
+      color-mix(in srgb, var(--ds-accent) 22%, transparent) 0%,
+      transparent 68%),
+    radial-gradient(56% 68% at 2% 104%,
+      color-mix(in srgb, var(--ds-primary-deep) 16%, transparent) 0%,
+      transparent 66%),
+    linear-gradient(176deg,
+      rgba(222,233,247,.98)  0%,
+      rgba(238,244,251,.72) 34%,
+      #FFFFFF               64%,
+      rgba(228,238,250,.96)100%);
+}
+.hp-ground--paper2{
+  background-color:#FFFFFF;
+  background-image:
+    radial-gradient(58% 74% at 6% -6%,
+      color-mix(in srgb, var(--ds-primary-deep) 18%, transparent) 0%,
+      transparent 66%),
+    radial-gradient(64% 80% at 98% 102%,
+      color-mix(in srgb, var(--ds-accent) 22%, transparent) 0%,
+      transparent 70%),
+    linear-gradient(184deg,
+      #FFFFFF                0%,
+      rgba(224,235,248,.94) 42%,
+      rgba(238,245,252,.78) 74%,
+      rgba(220,232,247,.98)100%);
+}
+
+
+/* ---- A8. "GETTING HERE" REBUILT ----------------------------------------
+   "the getting here section is not readable at all. remove the lines above the
+    steps. place them in gradient blue plain boxes. for the numbers, make them low
+    opacity on the left side of the texts, same treatment as Why you're probably
+    here section."
+   REVERSES the P3-4 treatment above: the accent top-rule and the small "STEP N"
+   eyebrow both go. Each step becomes a filled blue panel with white copy, and the
+   numeral becomes the same big low-opacity watermark used at band 3, driven by the
+   same kind of counter. Readability stops depending on a busy photographic ground
+   underneath, which is what "not readable at all" was about. */
+/* THE REAL REASON THIS SECTION WAS "NOT READABLE AT ALL", found by measuring the
+   composited pixel rather than by reading the rules I had just written. The step
+   boxes rendered as pale steel-blue instead of the deep blue specified here, and the
+   first assumption , a capture taken mid-reveal , was WRONG: the opacity was pinned
+   at 0.66 and never moved, through a 15-second wait.
+   The V2 layer above carries `.hp-note, .hp-notes{ font-size:var(--text-sm);
+   opacity:.66 }`, a "quiet aside" treatment applied to this class site-wide. So
+   these three steps have been rendering at 66% opacity in the small size since V2,
+   which is exactly the complaint. Every later change , the rules, the eyebrows, the
+   blue panels , was decoration on top of a section that was two-thirds transparent.
+   Both halves are undone here, scoped to this band so any other .hp-note elsewhere
+   keeps the quiet treatment it was given on purpose. */
+#s9-compare-teaser .hp-notes,
+#s9-compare-teaser .hp-note{
+  opacity:1;
+  font-size:var(--text-body);
+}
+#s9-compare-teaser .hp-notes{
+  counter-reset: v3-step;
+}
+#s9-compare-teaser .hp-note{
+  counter-increment: v3-step;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-top:0;
+  border-left:0;
+  border-radius: var(--ds-r-surface);
+  padding: var(--sp-6) var(--sp-5) var(--sp-6) clamp(56px, 5.4vw, 78px);
+  max-width:none;
+  text-align:left;
+  color:#FFFFFF;
+  background-color: var(--ds-primary-deep);
+  background-image:linear-gradient(152deg,
+    color-mix(in srgb, var(--ds-accent) 46%, var(--ds-primary-deep))  0%,
+    color-mix(in srgb, var(--ds-accent) 22%, var(--ds-primary-deep)) 48%,
+    var(--ds-primary-deep) 100%);
+  box-shadow: var(--lift-raised);
+}
+/* the eyebrow the previous pass added is replaced, not stacked with, the watermark */
+#s9-compare-teaser .hp-note::before{
+  content: counter(v3-step);
+  position:absolute;
+  left:-4px;
+  bottom:-0.16em;
+  z-index:-1;
+  display:block;
+  margin:0;
+  font-family:var(--ds-font-display);
+  font-size: clamp(88px, 8.6vw, 124px);
+  line-height:.76;
+  font-weight:800;
+  letter-spacing:-.04em;
+  text-transform:none;
+  color:#FFFFFF;
+  opacity:.17;
+  font-variant-numeric:tabular-nums;
+  pointer-events:none;
+}
+/* the band's own photographic wash is no longer carrying the text, so it steps back */
+#s9-compare-teaser .hp-ground::before{ opacity:.12; }
+
+
+/* ---- A9. THE PORTRAITS MUST NOT MOVE -----------------------------------
+   "do not animate the people inside the circles because they are being cutoff.
+    attached them to the circular frame so there is no shifting of face position."
+   REVERSES the portrait scale added in P2-2c. The portrait is cropped by its own
+   circular frame, so scaling it on hover pushed the face off its own centre and
+   clipped it. The scale is removed outright and the transform is pinned to the crop
+   the markup sets per face, so the face cannot drift on any state.
+   THE GLOW STAYS: that was the part of the request that worked, and it lives on the
+   card, not on the portrait. */
+/* THE HOVER TRANSFORM IS RESTATED AS THE REST TRANSFORM, IN FULL, and the "in full"
+   is the whole point. The first version of this rule wrote `scale(var(--hp-p-z, 1))`
+   and nothing else, which silently dropped the `translate(--hp-p-x, --hp-p-y)` the
+   base rule carries AND changed the fallback from 1.5 to 1. Those two custom
+   properties are what carry each portrait's frame onto that face's centre, set per
+   image in the markup. Dropping them would have shifted all six faces off centre on
+   every state , which is precisely the defect being fixed here, introduced by the
+   fix. Caught by reading the base rule before building rather than after.
+   So the hover state is given the EXACT rest transform, and the transition is
+   removed so nothing moves at all. */
+.hp-portrait__img{ transition: none; }
+.hp-people .hp-person:hover .hp-portrait__img,
+.hp-people .hp-person:focus-within .hp-portrait__img{
+  transform: scale(var(--hp-p-z, 1.5)) translate(var(--hp-p-x, 0%), var(--hp-p-y, 0%));
+}
+
+
+/* ---- A10. WITHDRAWN ------------------------------------------------------
+   The owner: "nevermind the drop shadow in the white boxes."
+   The rule that gave every light panel a hairline and a two-stop cast shadow is
+   REMOVED rather than commented out, so nothing here is carrying dead weight. The
+   panels return to the shadows they had before this batch: .hp-plate--paper keeps
+   the locked --hp-shadow-box from the approved sheet, and the light flow panel keeps
+   the --lift-raised it was given in Part 2. Nothing else in Part 3B is affected. */
+
+/* ---- A11. THE HERO LINE MOVES LEFT -------------------------------------
+   "move the text a bit more to the left, a bit further than the alder logo in the
+    nav."
+   REVERSES the +52px offset added in P1-1b, which had moved the line the other way
+   on the earlier instruction to sit "slightly off-centre". The owner has since seen
+   it and wants it outside the masthead's left edge instead, so the zone now breaks
+   OUT of the container rather than sitting inside it: at 1440 the wordmark starts at
+   x=180 and the headline now starts near x=131. The ink ramp's plateau runs from 0,
+   so moving left moves the type further INTO the protected zone, not out of it. */
+.hp-band--hero .hp-textzone{
+  margin-left: calc(-1 * clamp(20px, 3.4vw, 50px));
+  max-width: min(680px, 52vw);
+}
+
+/* ---- A12. LET THE NEW HERO BE BRIGHT -----------------------------------
+   Not a separate instruction, but the consequence of one. The brief for this
+   photograph was "morning lighting, bright atmosphere ... happy vibe, eye catching",
+   and rendered behind the ramp the build already had, it came back moody and
+   blue-grey: a scrim tuned for a dark, low-key operatory was still sitting on a
+   high-key one. The picture was doing what was asked and the treatment was
+   cancelling it.
+   Three changes, all scoped to the hero so no other photographic ground moves:
+     - the plateau ends at 60% instead of 66%. The text zone now runs to x=811 at
+       1440, which is 56.3%, so 60% still covers every glyph with room to spare.
+     - the open end drops from 20% ink to 7%, so the right-hand half of the frame ,
+       where the two faces are , is nearly clear instead of veiled.
+     - the focal vignette halves, and its vertical top/bottom fade with it.
+   Contrast re-measured from composited pixels afterwards, not assumed. */
+.hp-band--hero .hp-ground--ink{
+  --hp-ink-open: color-mix(in srgb, var(--ds-primary-deep) 7%, transparent);
+  --hp-ink-mid:  color-mix(in srgb, var(--ds-primary-deep) 10%, transparent);
+  --hp-ink-deep: color-mix(in srgb, var(--ds-primary-deep) 24%, transparent);
+}
+.hp-band--hero .hp-ground--ink .hp-photo__scrim{
+  background-image:linear-gradient(90deg,
+    var(--hp-ink-plateau)  0%,
+    var(--hp-ink-plateau) 60%,
+    var(--hp-ink-open)    84%,
+    var(--hp-ink-open)   100%);
+}
+.hp-band--hero .hp-ground--ink .hp-photo__edge{
+  background-image:
+    radial-gradient(124% 130% at 74% 56%,
+      transparent          0%,
+      transparent         42%,
+      var(--hp-ink-mid)   76%,
+      var(--hp-ink-deep) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-primary-deep) 55%, transparent) 0%,
+      transparent            9%,
+      transparent           93%,
+      color-mix(in srgb, var(--ds-primary-deep) 40%, transparent) 100%);
+}
+
+
+/* ---- per-page tail, generated: this page is nav item 3 of 6 (about) ---- */
+.cc-nav > .cc-nav__item:nth-child(3) > .cc-link .cc-link__label::after{
+  transform:scaleX(1);
+  background-color:var(--ds-accent);
 }
