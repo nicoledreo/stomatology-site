@@ -3334,9 +3334,28 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    OUT of the container rather than sitting inside it: at 1440 the wordmark starts at
    x=180 and the headline now starts near x=131. The ink ramp's plateau runs from 0,
    so moving left moves the type further INTO the protected zone, not out of it. */
-.hp-band--hero .hp-textzone{
-  margin-left: calc(-1 * clamp(20px, 3.4vw, 50px));
-  max-width: min(680px, 52vw);
+/* SCOPED IN BATCH 4, AND THE DEFECT IS THIS RULE'S. Written unscoped, it subtracts an
+   outdent from a gutter that shrinks faster than the outdent does. Measured on the built
+   page, hero text left edge against the page's own gutter:
+       390  -> 0px   (gutter 20)      560  -> 12px  (gutter 32)
+       768  -> 6px   (gutter 32)      900  -> 17px  (gutter 48)
+      1024  -> 13px  (gutter 48)     1440  -> 131px (gutter 180)
+   At 390 the headline, the eyebrow and the standfirst all start at x=0, touching the edge
+   of the screen with no margin at all, and everywhere below 1440 they sit inside a gutter
+   the rest of the page keeps. Only the desktop number is the one that was asked for.
+   THE INSTRUCTION ITSELF IS DESKTOP-ONLY, which is why scoping it is honouring it rather
+   than trimming it. The owner asked for the line to sit "a bit further than the alder logo
+   in the nav": below the chrome's top breakpoint the nav collapses to a hamburger and
+   there is no wordmark on screen for the headline to be further left than, so the outdent
+   has nothing to measure itself against and only costs the gutter.
+   THE MEASURE IS SCOPED WITH IT. 52vw is 203px at 390, which is what was breaking the
+   headline as "Everyday / dental care / in / Riverbend." with one word stranded on a line
+   of its own. Below 1101 the zone returns to the width the approved sheet gives it. */
+@media (min-width:1101px){
+  .hp-band--hero .hp-textzone{
+    margin-left: calc(-1 * clamp(20px, 3.4vw, 50px));
+    max-width: min(680px, 52vw);
+  }
 }
 
 /* ---- A12. LET THE NEW HERO BE BRIGHT -----------------------------------
@@ -3377,6 +3396,1392 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
       transparent            9%,
       transparent           93%,
       color-mix(in srgb, var(--ds-primary-deep) 40%, transparent) 100%);
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 4 , the fourth batch of owner revisions.
+
+   SOURCE: thirteen numbered instructions with five annotated screenshots of the
+   live V3 build. Same convention as the three parts above: every rule answers a
+   numbered item and says which.
+
+   MARKUP TOUCHED BY PART 4, in full, so it is not discovered later:
+     - index.content.html s1: the hero photograph is replaced with the owner's own
+       file, and the standfirst is rewritten (items 1 and 2).
+     - index.content.html s5: three route sentences shortened to one line (item 6).
+     - index.content.html s6: a --v3-flowphoto custom property on the SECOND flow
+       panel, so it can take the first panel's treatment (item 7).
+     - index.content.html s10: the six question links become native <details>
+       disclosure rows carrying the FAQ page's own answers (item 9).
+     - index.content.html s12: three new closing lines (item 11).
+     - _chrome-block.html: a hard break in the closing paragraph (item 12); the
+       Photography credit becomes the vertical page list and the old footer bar is
+       emptied of its links (item 13).
+   Everything else in Part 4 is CSS.
+
+   WHAT WAS MEASURED FIRST. Every number below came off a render of the page as it
+   stood after the markup edits, not off an estimate. The measurements are quoted
+   in the rule that uses them.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B4-1. THE HERO RAMP, RE-DERIVED FOR THE OWNER'S PHOTOGRAPH ---------
+   Item 1 replaces the picture; this is the consequence of that, not a separate
+   instruction, and it is a SMALL move rather than a rebuild.
+   THE RAMP CANNOT BE REPLACED BY MOVING THE PICTURE, and that was checked before
+   touching it. Measured: the hero band is 1440x792 and the photograph renders at
+   1498x824 inside it, so cover scales the image TO WIDTH and crops it vertically.
+   object-position's X component has about 58px of travel in a 1440 frame and is
+   effectively inert. Where the two faces sit horizontally is fixed by the picture;
+   the only lever on how much ink lands on them is the ramp.
+   SO THE RAMP IS PULLED IN TO THE TYPE. Measured on the rendered page: the h1 sets
+   to three lines and its longest line ends at x=655, which is 45.5% of the frame,
+   and the standfirst ends short of that. The plateau was running to 60% and only
+   reaching its open value at 84%, which is 200px of full-strength ink past the last
+   glyph and directly over the patient's face. It now ends at 48% and is open by
+   66%: every glyph still sits on the plateau with 36px to spare, and the face that
+   starts near x=700 comes out from under it.
+   The plateau's own STRENGTH is untouched at 86%, because that is what carries the
+   white headline over a high-key photograph, and this frame is high-key everywhere
+   (mean luminance 171.6 / 180.7 / 151.2 / 175.5 / 175.7 by fifths). Contrast is
+   re-measured from composited pixels after the change, not assumed. */
+.hp-band--hero .hp-ground--ink .hp-photo__scrim{
+  background-image:linear-gradient(90deg,
+    var(--hp-ink-plateau)  0%,
+    var(--hp-ink-plateau) 48%,
+    var(--hp-ink-open)    66%,
+    var(--hp-ink-open)   100%);
+}
+/* the focal vignette comes down with it. It was tuned to hold a dark operatory
+   together; on a bright frame it reads as a grey wash over the corners. */
+.hp-band--hero .hp-ground--ink{
+  --hp-ink-open: color-mix(in srgb, var(--ds-primary-deep) 4%, transparent);
+  --hp-ink-mid:  color-mix(in srgb, var(--ds-primary-deep) 6%, transparent);
+  --hp-ink-deep: color-mix(in srgb, var(--ds-primary-deep) 14%, transparent);
+}
+
+
+/* ---- B4-2. THE SERVICE CARDS ------------------------------------------
+   Item 3: "'Restorative Work' must be in 2 lines like the others. Bring all the
+    texts down a bit because there's a big gap at the bottom."
+
+   2a. THE ONE-LINE HEADING. Measured: cards 1, 2 and 4 set their headings to two
+   lines and card 3 to one, so its heading text starts at y=1334 where the other
+   three start at y=1304. The heading box is 202px wide and "Restorative work" fits
+   in it; capping THAT ONE heading's measure is what makes it wrap, and it is done
+   with a width rather than a <br> so the swap slot underneath still holds a plain
+   sentence a swapper can replace. */
+#s2-services-preview .hp-services > li:nth-child(3) .hp-service__name{
+  max-width: 62%;
+  margin-inline: auto;
+}
+
+/* 2b. THE GAP AT THE BOTTOM, AND WHERE IT ACTUALLY CAME FROM. Measured: the space
+   between the last line of text and the card floor was 57px on cards 1 to 3 and
+   30px on card 4. The card's own bottom padding is only 24px of that. The rest is
+   a RESERVED LINE THAT NOBODY USES: section 2c above reserves four lines for the
+   sentence because "Crowns and bridges" sets to four, and the other three cards set
+   to three, so each of them carries an empty fourth line at the bottom of its box.
+   TWO CHANGES, AND THE SECOND IS THE REAL ONE. The bottom padding comes down from
+   24px to 16px, and the sentence is bottom-aligned INSIDE its reservation, so the
+   unused line moves above the text instead of below it. Result: all four cards now
+   end their copy 22px off the floor instead of 57 / 57 / 57 / 30, and the text
+   moves down by 35px on three of the four.
+   THE COST, NAMED. The reservation was written to level the FIRST body line across
+   the row; bottom-aligning levels the LAST one instead, so cards 1 to 3 now begin
+   their sentence one line lower than card 4. The owner is pointing at the bottom
+   edge, so the bottom edge is the one made straight. The four HEADINGS are
+   unaffected and still share a baseline: the reservation box has not moved, only
+   the text inside it. */
+/* CORRECTED AFTER RENDERING IT. The first version of this rule bottom-aligned the
+   sentence by making the paragraph a flex column. It is wrong, and only looking at the
+   page caught it: display:flex turns every child of the paragraph into a flex ITEM, and
+   these sentences each carry a <span class="hp-nb"> plus a trailing full stop, so
+   flex-direction:column stacked "...where we look at your", then "teeth and gums", then
+   "." on three separate rows with the stop orphaned at the bottom of every card. Nothing
+   in the geometry reported it: the box heights, the gaps and the alignment all measured
+   exactly as intended.
+   THE EVEN BOTTOM EDGE IS BOUGHT WITH THE LINE COUNT INSTEAD, which is the honest fix
+   rather than a trick. The four sentences ran 3, 3, 3 and 4 lines, so the reservation
+   had to hold four and three cards carried a dead line at the foot. Card 4's sentence is
+   rewritten to the same length as card 1's, all four now set to three lines, and the
+   reservation comes down to three. No spare line, nothing to align, and the paragraph
+   stays a normal block whose text flows the way text flows. */
+.hp-service{
+  padding: var(--sp-7) var(--sp-4) var(--sp-3);
+}
+.hp-service__line{
+  min-height: calc(3em * var(--ds-lh-body));
+}
+
+
+/* ---- B4-3. "WHY YOU'RE PROBABLY HERE" ---------------------------------
+   Item 4: "bring down the text where the neon green doodles are."
+   THE SAME SHAPE OF DEFECT AS 2b, AND THE SAME TWO-PART FIX. Measured: the gap
+   below the sentence is 41px on cards 1 and 3 and 66px on card 2, against a card
+   bottom padding of 40px. Section 3b reserves three lines because two of the three
+   cards need three; card 2 needs two and carries the spare at its foot.
+   Bottom-aligning the sentence in its reservation and trimming the card's bottom
+   padding to 24px puts all three at 25px off the floor and drops the text by 16px
+   on two cards and 41px on the third. The big low-opacity numeral behind the text
+   is anchored to the card, not to the sentence, so it does not move with it. */
+/* CORRECTED TWICE, and both corrections are worth keeping in the record.
+   FIRST: this rule bottom-aligned the sentence with a flex column, which turned every
+   inline child of the paragraph into a flex ITEM and stacked "kind of work" and its full
+   stop onto rows of their own. Every measurement said the layout was right; only looking
+   at the render found it.
+   SECOND: the flex was replaced by extending card 2's sentence to its neighbours' length,
+   on the assumption that would carry it to a third line. It did not. Measured after the
+   change: card 2 still set 48px of text against 73px on cards 1 and 3, so its bottom edge
+   was still 25px high. A sentence's line count is decided by the box width and the nowrap
+   spans inside it, not by its character count, and guessing at it twice is two guesses too
+   many.
+   THE FLOOR IS THE LEVER, AND IT WORKS FOR THE OPPOSITE REASON THE OLD ONE DID.
+   min-height is a MINIMUM: a sentence longer than the reservation grows its own box, and
+   this body is anchored to the card floor, so a taller box grows UPWARD and its last line
+   stays where it was. Reserving TWO lines rather than three therefore levels the bottom
+   edge for any mix of two- and three-line cards, without reserving a line for anybody or
+   depending on how a particular sentence happens to wrap. The tops differ by a line,
+   which is what different-length sentences look like; the edge the owner is pointing at
+   is the one that comes straight.
+   The copy edit that was made on the failed assumption is reverted with it: card 2 says
+   what the owner approved. */
+.hp-find{
+  padding-bottom: var(--sp-4);
+}
+.hp-find__line{
+  min-height: calc(2em * var(--ds-lh-head));
+}
+
+
+/* ---- B4-4. THE RECTANGLES IN "WHAT HAPPENS AT AN APPOINTMENT" ----------
+   Item 5: "remove these background rectangular boxes. I want this done already. I
+    can't accept no as an answer. Do this and find a way to remove them without
+    changing the current animation and look of this section."
+
+   WHY IT LOOKED LIKE NOTHING HAD BEEN DONE. Section 4a of Part 1 DID remove these
+   boxes, and it worked: measured at rest, all three cards report
+   background-color rgba(0,0,0,0), background-image none, box-shadow none, border
+   0px. There is no box on this section when the page is sitting still.
+   THE OWNER'S SCREENSHOT IS A HOVER CAPTURE, and that is the whole answer. The
+   pointer was over step 2 when it was taken. Measured with step 2 hovered:
+     step 1 and 3   box-shadow: rgb(227,232,238) 0 0 0 1px  plus a faint drop
+     step 2         a 4px/10px drop, a 40px/72px drop, and the same 1px ring
+   A 0-0-0-1px shadow on a card with no background IS a hairline rectangle, drawn
+   around nothing. It is the only thing on those three cards that can draw an edge,
+   and it only draws it while the row is hovered, which is exactly the frame the
+   owner is pointing at. The boxes were not there at rest and were never removed
+   from the interaction.
+   SO THE FOUR HOVER RULES LOSE THEIR SHADOWS AND NOTHING ELSE CHANGES. The
+   selectors are restated verbatim at their original specificity so this file's own
+   later position decides it. Everything the owner asked to keep is untouched and
+   named here rather than left to inference: the row still recedes to scale(.985),
+   the hovered step still lifts translateY(-5px), the medallion still grows to
+   scale(1.1) and fills with the accent, its numeral still flips to the light ink,
+   the sentence still shifts and re-inks, the rail still draws, the staggered
+   reveal still runs, and the keyboard focus ring, which is an outline and not a
+   shadow, is deliberately left alone. */
+.hp-timeline:hover .hp-step__card,
+.hp-timeline:focus-within .hp-step__card{
+  box-shadow:none;
+}
+.hp-timeline:hover .hp-step:hover .hp-step__card,
+.hp-timeline:focus-within .hp-step:focus .hp-step__card{
+  box-shadow:none;
+}
+
+
+/* ---- B4-5. THE FIVE DESTINATION CARDS ---------------------------------
+   Item 6: "move all text here down as well, and keep the subtexts in one line
+    only, not 2 ... So, 1 line for the headline and 1 line for the subhead."
+   THE COPY WAS SHORTENED IN THE MARKUP so the sentences FIT one line; this releases
+   the reservations that were holding room for a second. Measured: every one of the
+   five labels already set to one line and, after the copy edit, so does every one
+   of the five sentences, while the reservations were still holding two lines each
+   (59.4px and 55.08px). That is 57px of empty box per card, and because the block
+   is anchored to the card floor, releasing it is what moves the text DOWN.
+   The card's bottom padding comes down from 40px to 24px at the same time, which
+   moves it down again and closes the 73px gap the measurement found under it. */
+/* UNSCOPED FROM THE HOME PAGE, and the reason is item 3's second clause rather than
+   item 6: "Check the boxes on every page and see if this is the case. If yes, bring down
+   the texts in the other boxes across the site as well."
+   Measured across all six pages before widening anything. The about page carries a single
+   route panel whose copy ended 46px off its floor, against 30px here once these rules
+   applied, so the same dead space was sitting on another page. The three declarations are
+   floors and a padding; a card whose label or sentence genuinely runs to two lines grows
+   its own box and is unaffected. */
+.hp-route__label{
+  min-height: calc(1em * var(--ds-lh-head));
+}
+.hp-route__line{
+  min-height: calc(1em * var(--ds-lh-body));
+}
+.hp-route{
+  padding-bottom: var(--sp-4);
+}
+
+/* THE PEOPLE CARDS WERE THE ONE FAMILY STILL RAGGED, and it took sweeping every card
+   family on every page to find it. Measured: .hp-person reports gaps of 51, 29 and 29px
+   between its last line of copy and the card floor, on the home page AND on the team
+   page, because one of the three sentences runs a line shorter than its neighbours and
+   the reservation holds the taller of the two.
+   THE CARD IS ALREADY BOTTOM-ANCHORED, which is what makes the fix a deletion rather than
+   an addition: .hp-person is display:flex with justify-content:space-between, so its last
+   child's bottom edge already sits on the card's content floor. With the reservation gone
+   the short sentence's box is exactly its own two lines and the long ones are exactly
+   their three, and all three end on one line. Nothing needs to be reserved for anybody.
+   THE COST, NAMED: the reservation was levelling the FIRST line of the three sentences.
+   It is the bottom edge the owner is pointing at, so the bottom edge is the one made
+   straight, the same trade this batch makes on the service and find cards. */
+/* SPECIFICITY, CORRECTED. Written first as `.hp-person__line`, which is (0,1,0), against
+   Part 2's `.hp-people .hp-person__line` at (0,2,0). Source order never got a say and the
+   rule silently did nothing: measured after applying it, min-height was still 68.04px on
+   a 14px/22.68px line, which is that rule's three reserved lines to the pixel. Matching
+   the selector is what lets this one decide.
+   AND IT ANCHORS RATHER THAN RELEASES, which is the better answer for this family.
+   Simply dropping the reservation would have levelled the sentences and unlevelled the
+   NAMES: the body's bottom edge is pinned by the card's space-between, so a shorter box
+   pushes everything above it down, and card 1's name would have dropped 23px below its
+   two neighbours' with three portraits sitting level above them. Making the body a column
+   and pushing only the sentence to its floor pins BOTH ends: the name, role and reserved
+   title row stay at the top of the body where they already were, the sentence sits on the
+   body's floor, and the slack lands between them where there is nothing to misalign.
+   The sentence itself stays an ordinary block. Nothing here makes a paragraph a flex
+   container, which is the mistake this batch already made twice on the service and find
+   cards. */
+.hp-people .hp-person__body{
+  display:flex;
+  flex-direction:column;
+}
+.hp-people .hp-person__line{
+  min-height: 0;
+  margin-top: auto;
+}
+
+
+/* ---- B4-6. THE RIGHT-HAND PANEL OF "BEFORE YOUR FIRST VISIT" ----------
+   Item 7: "I want the right box to have the same exact treatment as the box on the
+    left."
+   EXACT, SO IT IS THE SAME DECLARATIONS AND NOT AN IMITATION. Every rule Part 2
+   wrote for .hp-flows > li:first-child is restated below for :nth-child(2), value
+   for value, including the two pseudo-element layers and the opaque background the
+   panel needs in order to be legible to a contrast checker that walks ancestors
+   rather than reading pixels. The photograph itself arrives on the element, as a
+   custom property, exactly as the left panel's does.
+   SELECTOR WEIGHT, CHECKED RATHER THAN ASSUMED. .hp-flows > li:nth-child(2) is
+   (0,2,1), the same as .hp-flows > li:first-child, so source order decides and this
+   file is appended last. Written as the lighter .hp-flows > li it would have LOST
+   to Part 2's own 1e rule, which paints the light gradient this block has to
+   replace, and the right panel would have stayed white. */
+.hp-flows > li:nth-child(2){
+  background-color: var(--ds-primary-deep);
+  background-image: none;
+  border-color: rgba(255,255,255,.16);
+}
+.hp-flows > li:nth-child(2) > *{
+  position:relative;
+  z-index:2;
+}
+.hp-flows > li:nth-child(2)::before{
+  content:"";
+  position:absolute; inset:0; z-index:0;
+  background-image: var(--v3-flowphoto);
+  background-size:cover;
+  background-position: var(--v3-flowphoto-pos, 50% 40%);
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+.hp-flows > li:nth-child(2)::after{
+  content:"";
+  position:absolute; inset:0; z-index:1;
+  background-color: color-mix(in srgb, var(--ds-primary-deep) 52%, transparent);
+  background-image:linear-gradient(to bottom,
+    color-mix(in srgb, var(--ds-primary-deep) 66%, transparent)  0%,
+    color-mix(in srgb, var(--ds-primary-deep) 52%, transparent) 42%,
+    color-mix(in srgb, var(--ds-primary-deep) 22%, transparent) 74%,
+    color-mix(in srgb, var(--ds-primary-deep) 10%, transparent)100%);
+  pointer-events:none;
+}
+/* rgba() rather than color-mix() on TEXT, for the reason Part 2 records: three
+   contrast checkers in this toolchain read color(srgb 1 1 1 / .86) as rgb(1,1,1). */
+.hp-flows > li:nth-child(2) .hp-flow__label{ color:#FFFFFF; }
+.hp-flows > li:nth-child(2) .hp-flow__line{ color: rgba(255,255,255,.86); }
+.hp-flows > li:nth-child(2) .hp-go--quiet{
+  border-color: rgba(255,255,255,.42);
+  color:#FFFFFF;
+  background-color: rgba(255,255,255,.10);
+}
+.hp-flows > li:nth-child(2) .hp-go--quiet:hover,
+.hp-flows > li:nth-child(2) .hp-go--quiet:focus-visible{
+  background-color:#FFFFFF;
+  border-color:#FFFFFF;
+  color: var(--ds-primary-deep);
+}
+
+
+/* ---- B4-7. "WHERE WE ARE, AND WHEN WE'RE OPEN" ------------------------
+   Item 8: "move the image far more to the left so that the teeth will be at the
+    leftmost part, and the right box will sit on the rightmost part, without
+    covering the teeth. Fix the box paddings. The store hours are now moved outside
+    the box; adjust the box width if needed."
+
+   7a. THE HOURS REALLY ARE OUTSIDE THE BOX, AND BY 22px. Measured: the plate ends
+   at x=1260 and the hours column ends at x=1282. The three fact columns need 593px
+   of track and gap inside a plate that gives them 541, so the row overflows and the
+   last column hangs off the right edge. The owner is reading a real defect off the
+   screen, not a preference.
+   THE FIX IS THE COLUMN COUNT, NOT THE WIDTH, and that choice has a reason.
+   Widening the plate enough to hold three columns takes it to about 660px, and a
+   660px plate pinned right starts at x=680, which is on top of the teeth. The two
+   halves of this instruction pull against each other at three columns and stop
+   pulling at one. Stacked, the three facts need 240px, the plate can be narrow, and
+   there is room for the picture to move.
+   ITEM 8's OWN WORDING SANCTIONS THIS: "adjust the box width if needed". */
+@media (min-width:900px){
+  #s8-location-and-hours .hp-facts{
+    grid-template-columns: minmax(0,1fr);
+    justify-content:start;
+    gap: var(--sp-5);
+  }
+  /* 7b. THE PLATE, NARROWED AND PUSHED PAST THE READING MEASURE. It was
+     max-width:min(660px,56%) sitting flush with the wrap's right edge at x=1260,
+     which is where the body copy stops, not where the band stops. The band is
+     full-bleed. Breaking out of the wrap by up to 86px puts the panel's right edge
+     at x=1346 in a 1440 frame, which is "the rightmost part" as an actual edge
+     rather than as a column boundary.
+     PADDING MADE SYMMETRIC at the same time, which is the "fix the box paddings"
+     clause: it was 48px top and bottom against 32px left and right. */
+  #s8-location-and-hours .hp-plate{
+    max-width: min(430px, 34%);
+    margin-left:auto;
+    margin-right: calc(-1 * clamp(0px, 6vw, 86px));
+    padding: var(--sp-6);
+  }
+  /* 7c. THE SUBJECT MOVES LEFT, AND object-position CANNOT DO IT. Measured: the
+     band is 1440x648 and the photograph is 16:9, so cover scales it to width and
+     crops it vertically. Its horizontal travel is a couple of dozen pixels and the
+     10% anchor Part 2 set was doing almost nothing. A transform is the only thing
+     that can actually move it.
+     THE TWO NUMBERS ARE SOLVED, NOT PICKED. scale(s) about the frame centre sends a
+     point x to 720+s(x-720), and translateX(t%) then shifts it by 14.4t px. The
+     model spans roughly x=320 to x=960 on the rendered band. Requiring the frame to
+     still cover both edges after the move gives |t| <= 50(s-1); at s=1.26 that
+     allows 13%, and 11% is used, which lands the model at x=58..864 with its centre
+     at 461 instead of 640. The plate now starts at x=916, so the two clear each
+     other by 52px.
+     THE SCALE IS KEPT LOW ON PURPOSE. The source is 1024px wide; at 1.26 it is
+     drawn at 1.72x, where at the 1.6 that three columns would have required it
+     would be drawn at 2.25x and visibly soft. */
+  #s8-location-and-hours .hp-photo__img{
+    transform: translateX(-11%) scale(1.26);
+    object-position: 50% 50%;
+  }
+}
+
+
+/* ---- B4-8. THE QUESTIONS BECOME DISCLOSURE ROWS -----------------------
+   Item 9: "I want these questions to have dropdowns for the answers instead of
+    linking to another page." The widgets themselves are markup and are described
+    at the section in index.content.html; this is the layout they need.
+   ONE COLUMN, NOT TWO. Measured on the two-column grid the section inherited: the
+   six rows came out 257, 453, 343, 475, 508 and 455px wide, because each <details>
+   sized to its own question, so six rows that are meant to read as one list had six
+   different rules under them. A disclosure list also grows downward when a row
+   opens, and in two columns that leaves a hole beside every open answer.
+   The measure is capped so a long answer does not run the full 1080px of the band,
+   and the block is centred while its contents stay left, which is the alignment
+   Part 2's item 5 asked for here. */
+#s10-pricing-teaser .hp-qs--drop{
+  display:grid;
+  grid-template-columns: minmax(0,1fr);
+  gap:0;
+  width:100%;
+  max-width: 78ch;
+  margin-inline:auto;
+  align-items:start;
+  text-align:left;
+}
+#s10-pricing-teaser .hp-qs--drop > .hp-qitem{
+  display:block;
+  width:100%;
+}
+#s10-pricing-teaser .hp-faq{
+  border-bottom: 1px solid rgba(255,255,255,.18);
+}
+/* the question sat at 27.8px, which is a card heading and too loud for six rows in
+   a list. It steps down to the section's sub-heading size and keeps its weight. */
+#s10-pricing-teaser .hp-faq > summary.hp-faq__q{
+  font-size: clamp(17px, 1.35vw, 20px);
+  padding-block: var(--sp-4);
+  color:#FFFFFF;
+  text-align:left;
+}
+#s10-pricing-teaser .hp-faq > summary.hp-faq__q h3{
+  margin:0;
+  font-size:inherit;
+  line-height:1.4;
+  font-weight:600;
+  color:inherit;
+  text-align:left;
+}
+/* rgba() rather than color-mix() on TEXT, for the reason Part 2 records. */
+#s10-pricing-teaser .hp-faq .hp-faq__a{
+  color: rgba(255,255,255,.88);
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+  text-align:left;
+}
+#s10-pricing-teaser .hp-faq .hp-faq__a a{
+  color:#FFFFFF;
+  text-decoration-color: rgba(255,255,255,.55);
+}
+
+
+/* ---- B4-9. "WHAT THIS PRACTICE IS" ------------------------------------
+   Item 10: "move this text a bit up because it lies too low, reaching the lower
+    part of the section."
+   Measured: the band runs 112px from its top to the heading, 64px from the heading
+   to the sentence, and leaves only 40px between the sentence and the band's floor.
+   The sentence is nearly twice as far from the thing it belongs to as it is from
+   the edge of the section, which is what "lies too low" is describing. Half of the
+   64 is given back to the floor: the sentence moves up 28px and the space below it
+   grows from 40 to 68, so it reads as attached to its heading and clear of the
+   seam. */
+#s11-stance-line .hp-stance{
+  margin-top: calc(-1 * var(--sp-5));
+}
+#s11-stance-line .hp-wrap{
+  padding-bottom: clamp(44px, 4.6vw, 68px);
+}
+
+
+/* ---- B4-10. THE FOOTER -------------------------------------------------
+   Item 13: "tel and email part must be moved to the left. Also, replace the
+    Photography section with the list of pages at the bottom ... listed vertically
+    ... Adjust this after, make alignments neat and organized."
+
+   10a. THE OLD BAR GOES. Its six links are now the masthead's fifth column and the
+   only thing left in it is the legal line batch 3 hid, so it renders a 15px empty
+   strip. It is taken off the page rather than deleted from the shared markup, for
+   the same reason batch 3 gave: restoring it is one rule. */
+.cc-foot__bar{ display:none; }
+
+/* 10b. THE TELEPHONE MOVES LEFT, AND THE MEASUREMENT SAYS WHY IT WAS RIGHT.
+   Measured: five content-sized tracks of 199 / 159 / 193 / 217 / 183px spread with
+   space-between across 1080px, which leaves 32px between each and starts the
+   telephone at x=602. Packing the tracks tighter barely moves it, because the two
+   columns in front of it are as wide as their longest unbroken line, and the first
+   of them, "Alder Grove Dental, Riverbend", is the widest string in the block.
+   PROPORTIONAL TRACKS ARE WHAT MOVES IT. The first two columns are given 0.72fr
+   each, which is narrower than their content and lets those two values wrap to two
+   short lines, and the telephone starts at x=544 instead of 602. Every track is a
+   fixed fraction of the row, so the five columns line up on a real grid rather than
+   on whatever their strings happen to measure, which is the "neat and organized"
+   half of the instruction.
+   SCOPED ABOVE 1100, because the chrome sheet's own ladder takes this block to
+   three columns, then two, then one below that, and an unscoped grid-template in
+   the last sheet the page loads defeats every step of it. Batch 3 was caught by
+   exactly that and the note at item A5 records it. */
+@media (min-width:1101px){
+  .cc-mast{
+    grid-template-columns: 0.72fr 0.72fr 1fr 1fr 1.05fr;
+    justify-content: normal;
+    column-gap: var(--sp-4);
+  }
+}
+
+/* 10c. THE PAGE LIST. A plain vertical stack, no bullets, with the index numeral
+   set in tabular figures so 01 to 06 hold one column and the labels start on one
+   left edge. The numeral is dimmed rather than sized down, so it stays a rail and
+   does not compete with the page name beside it. */
+.cc-mast__list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap: var(--sp-2);
+}
+.cc-mast__list > li{ margin:0; }
+.cc-mast__list .cc-a{
+  display:inline-flex;
+  align-items:baseline;
+  gap: var(--sp-2);
+  white-space:nowrap;
+}
+.cc-mast__list .cc-num{
+  font-variant-numeric: tabular-nums;
+  opacity:.55;
+  letter-spacing:.02em;
+}
+
+
+/* ---- B4-11. RESPONSIVE. Every reservation released above is released again at
+   the narrow widths, and every desktop-only geometry is left behind the width it
+   was measured at. The layer sits after the approved sheet, so anything written
+   without a scope outranks the ladder underneath it. ------------------------- */
+@media (max-width:900px){
+  /* the two flow panels stack; the second keeps its treatment. */
+  .hp-flows > li:nth-child(2){ background-color: var(--ds-primary-deep); }
+}
+@media (max-width:768px){
+  /* one column of full-width cards: the reservations that level a row have nothing
+     to level, and the bottom-alignment has no spare line to move. */
+  #s5-capability-switcher .hp-route__label,
+  #s5-capability-switcher .hp-route__line{ min-height:0; }
+  .hp-service{ padding: var(--sp-6) var(--sp-4) var(--sp-3); }
+  #s10-pricing-teaser .hp-faq > summary.hp-faq__q{ font-size:17px; }
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 5 , the fifth batch of owner revisions.
+
+   SOURCE: twelve numbered instructions with five annotated screenshots, spanning
+   the home page, the shared chrome and the "What we do" page.
+
+   MARKUP TOUCHED BY PART 5, in full:
+     - index.content.html s8: a <br> that fixes the two-line cut of the heading (1).
+     - index.content.html s3: two card sentences cut to two lines (4).
+     - services.content.html s1: the owner's hero photograph (6).
+     - services.content.html s2: the wedge paragraph shortened, key phrases lifted (7).
+     - services.content.html s3: card 4's sentence cut to three lines (8).
+     - services.content.html s4: a --v3-flowphoto on each of the three rails, and their
+       sentences cut to two lines (9).
+     - services.content.html s5: the two channel values become one sentence (11).
+     - _chrome-block.html: the feature card's arrow deleted (2); the "What we do"
+       trigger becomes an <a href> and the menu script learns focus (10).
+   Everything else in Part 5 is CSS.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B5-1. THE HOURS PLATE, WIDENED --------------------------------------
+   Item 1: "Expand the box so all text stays inside it. Make the headline exactly two
+    lines."
+   The <br> in the markup states the cut; this gives it somewhere to fit. Batch 4 took
+   this plate down to 430px to clear the study model, and at that width the heading
+   set to three lines. It goes to 520px, and the photograph moves further left to pay
+   for it, solved on the same arithmetic batch 4 used rather than nudged:
+   scale(s) about the frame centre sends x to 720+s(x-720) and translateX(t%) then
+   shifts by 14.4t px, with |t| <= 50(s-1) required for the frame to still cover both
+   edges. Holding the model clear of a plate that now starts at x=826 needs s >= 1.333;
+   at s=1.36 the window for t is [-30, -29.4] per cent and -17.4% is inside it with the
+   model ending near x=796, thirty pixels clear.
+   THE SCALE IS THE COST AND IT IS NAMED. The source is 1024px wide, so 1.36 draws it
+   at 1.91x rather than batch 4's 1.72x. That is the price of the wider box; a wider
+   box on this band cannot be had any other way, because the two halves of item 8's
+   instruction , model at the far left, panel at the far right , pull against each
+   other and the only slack is in the crop. */
+/* CORRECTED AFTER MEASURING THE RENDER, and the first version failed for a reason worth
+   keeping: the max-width was written min(520px, 40%) and the PERCENTAGE was the binding
+   half, not the pixel one. The plate's containing block is the 1080px reading measure, so
+   40% resolved to 432px and the 520 never applied at all. The heading still set to three
+   lines and the plate had barely moved.
+   THE TWO NUMBERS ARE NOW SOLVED AGAINST A MEASUREMENT rather than estimated. Probing the
+   heading's own computed font at 44px: "Where we are," needs 295px and "and when we're
+   open" needs 435px on one line. So the second line, not the first, sets the requirement.
+     - the cap becomes min(520px, 50%), where 50% of 1080 is 540, so the 520 is what binds
+       and the plate is actually 520px wide with 424px inside its padding.
+     - the heading steps 44px -> 40px INSIDE THIS PLATE ONLY, which brings the long line's
+       requirement to 435 * 40/44 = 396px. 396 fits 424 with 28px to spare, and the short
+       line needs 268.
+   WHY THE TYPE MOVES RATHER THAN THE PICTURE MOVING FURTHER. Fitting 435px at full size
+   needs a 560px plate, which needs the model to end by x=756, which needs scale(1.46) on a
+   1024px-wide source , 2.05x upscale, visibly soft. Four points of heading size costs
+   nothing a reader can see; two extra tenths of upscale on a photograph does. The plate
+   stays at 520 and the picture keeps batch 4's crop arithmetic unchanged.
+   Verified after the change rather than assumed: heading exactly two lines, and the facts
+   block ends 49px inside the plate's right edge, which is item 1's "all text stays inside
+   it" as a number. */
+@media (min-width:900px){
+  #s8-location-and-hours .hp-plate{
+    max-width: min(520px, 50%);
+  }
+  #s8-location-and-hours .hp-plate .hp-h2{
+    font-size: clamp(30px, 2.8vw, 40px);
+  }
+  #s8-location-and-hours .hp-photo__img{
+    transform: translateX(-17.4%) scale(1.36);
+  }
+}
+
+/* THE FORCED BREAK IS A DESKTOP INSTRUCTION AND IS SCOPED LIKE ONE. Checked at 390 after
+   putting it in: the plate goes full width below 900 and the heading drops to the narrow
+   size, so "and when we're open" no longer fits one line, and because "when we're open" is
+   bound with non-breaking spaces the only place left to break was after "and" , which
+   stranded that one word on a line of its own. The owner asked for a two-line heading and
+   was looking at a desktop screenshot; a hard break that produces a three-line heading with
+   an orphan on a phone is not that instruction carried out, it is that instruction applied
+   where it was never made.
+   Below 900 the break is taken out of the flow and the heading sets itself, which gives
+   "Where we are, and" / "when we're open" , two lines, and the clause kept whole. */
+@media (max-width:899px){
+  #s8-location-and-hours .hp-plate .hp-h2 br{ display:none; }
+}
+
+
+/* ---- B5-2. THE MEGA MENU FEATURE CARD ------------------------------------
+   Item 2: "Remove the arrow. Move the text slightly lower to reduce the empty gap
+    below it."
+   THE GAP IS THE ARROW'S OWN SPACING, LEFT BEHIND. .cc-feat is a flex column with
+   justify-content:flex-end, so its contents already sit on the card floor, and the
+   only thing between the sentence and that floor was the margin .cc-feat__line was
+   carrying to separate itself from the cue. The cue is gone from the markup; its
+   margin goes with it, and the sentence drops to the padding line by itself. */
+.cc-feat__line{
+  margin-bottom: 0;
+}
+
+
+/* ---- B5-3. THE "GETTING HERE" NUMERALS -----------------------------------
+   Item 3: "Make the numbers approximately as large as the green doodles. Lower their
+    opacity further so they remain subtle and do not interfere with text readability."
+   The doodles in the screenshot stand about three quarters of the card's height, where
+   the numeral was reaching about a third. It roughly doubles, and the opacity comes
+   down from .17 to .09 at the same time, which is what stops a numeral that size from
+   competing with the sentence sitting on it. Both halves of the instruction are one
+   trade: bigger only stays subtle if it also gets fainter.
+   The note already carries overflow:hidden and paints the numeral at z-index -1 inside
+   its own isolated stacking context, so a numeral taller than the card is clipped by
+   the card rather than escaping it, and it stays behind the text rather than in front
+   of it. Nothing about the position or the stacking changes. */
+#s9-compare-teaser .hp-note::before{
+  font-size: clamp(150px, 14.5vw, 212px);
+  opacity: .09;
+}
+
+
+/* ---- B5-4. "WHY YOU'RE PROBABLY HERE", TWO LINES EACH ---------------------
+   Item 4: "Fix the text alignment in this section. Keep every text block to two lines
+    only and shorten sentences where necessary so everything aligns evenly."
+   The sentences are cut in the markup; this brings the reservation down to match, so
+   there is no reserved-but-unused line left under any of the three and the row is
+   level at BOTH ends rather than only at its foot. Batch 4 could only level the foot,
+   because the copy ran 3, 2 and 3 lines and a reservation cannot make unequal blocks
+   equal. Equal copy can. */
+.hp-find__line{
+  min-height: calc(2em * var(--ds-lh-head));
+}
+
+
+/* ---- B5-5. THE FOOTER ----------------------------------------------------
+   Item 5: "Keep all footer text the same size throughout. Use the same small text size
+    currently used for 'Alder Grove Dental, Riverbend.' Divide the six page links into
+    two columns, with three links on the left and three on the right ... Adjust the
+    spacing afterward so the entire footer remains centered, balanced, and neat."
+
+   5a. ONE SIZE, AND TWO THINGS WERE BREAKING IT. That reference value is .cc-mast__v,
+   which is --ds-fs-fine. The page list was rendering larger because a list item inside
+   the cell inherits the body size rather than the cell's, and the email was rendering
+   SMALLER because batch 3 stepped it down to 12.5px to keep it on one line inside a
+   196px track. Both are put back on the one size the instruction names. The email's
+   step is no longer needed: the fifth track no longer has to hold a fifty-character
+   credit line, so the tracks below give the email column the room it needs at full
+   size instead of shrinking the type to fit a track that was too narrow. */
+.cc-mast__list,
+.cc-mast__list .cc-a{
+  font-size: var(--ds-fs-fine);
+  line-height: 1.5;
+}
+.cc-mast__v a[href^="mailto:"]{
+  font-size: var(--ds-fs-fine);
+  letter-spacing: 0;
+}
+
+/* 5b. THREE LEFT, THREE RIGHT. grid-auto-flow:column against three explicit rows fills
+   01-02-03 down the first column and 04-05-06 down the second, which is the reading
+   order the instruction describes. Written as two columns with auto flow it would have
+   filled ACROSS , 01-02, 03-04, 05-06 , which is the same six links in the wrong
+   order. */
+.cc-mast__list{
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-2);
+}
+
+/* 5c. THE ROW RE-BALANCED AROUND IT, which is the "adjust the spacing afterward" half.
+   The page list is now twice as wide and half as tall as the single column it
+   replaces, so the fifth track is given the room that needs and the two that carry the
+   longest unbroken strings , the telephone-and-email column and the hours , keep
+   theirs. Scoped above 1100 for the reason batch 3's item A5 records: the chrome sheet
+   runs a 5 -> 3 -> 2 -> 1 ladder below that, and an unscoped grid-template in the last
+   sheet the page loads defeats every step of it. */
+/* CORRECTED, AND THIS FILE HAD ALREADY WRITTEN DOWN THE TRAP I WALKED INTO. Batch 3's
+   note at P3-3 records it in full: a bare `1fr` track carries an automatic MINIMUM of
+   min-content, so the track sizes are decided by the longest unbreakable string in each
+   column rather than by the fractions asked for. Written as plain fr the five columns came
+   out 168.5 / 144.3 / 206.7 / 195.0 / 269.4 against the 155 / 155 / 222 / 209 / 243 the
+   fractions describe , and the telephone-and-email column landed 15px short of what the
+   address needs, so with the type back at full size overflow-wrap broke it as
+   "hello@aldergrovedental.examp / le". The batch 3 fix for that was to shrink the type,
+   which is exactly what item 5 asks to undo, so the track has to give instead.
+   minmax(0,Nfr) removes the min-content floor and the fractions decide. Sized against the
+   measurement rather than guessed: the email needs about 216px at --ds-fs-fine, so column
+   three is given 1.10fr of 4.78 across 984px of track, which is 226px, and the page list
+   keeps 1.30fr = 268px, which is what its two columns of six links measured at.
+   Verified after the change: the address renders on ONE line at full size. */
+@media (min-width:1101px){
+  .cc-mast{
+    grid-template-columns:
+      minmax(0, 0.70fr)
+      minmax(0, 0.70fr)
+      minmax(0, 1.10fr)
+      minmax(0, 0.98fr)
+      minmax(0, 1.30fr);
+  }
+}
+
+
+/* ---- B5-6. THE "HOW WE WORK" EMPHASIS ------------------------------------
+   Item 7 lifts key phrases out of the shortened paragraph. A weight-and-ink emphasis
+   rather than .hp-key, and the reason is in the markup note: .hp-key paints its text
+   through a clipped gradient, which is a display-type treatment that thins at body
+   size and is the one thing on this site already defended in a contrast ledger. This
+   goes the other way , DARKER than the surrounding copy, never lighter , so the
+   emphasis cannot cost legibility at any size. */
+.hp-em{
+  font-weight: 600;
+  color: var(--ds-ink-heading);
+}
+
+
+/* ---- B5-7. "THE WORK WE DO", THE ONE-LINE HEADING ------------------------
+   Item 8: "Make 'Restorative Work' display on two lines."
+   The same measured fix batch 4 made on the home page's copy of this card, applied to
+   this page's copy of it: three of the four headings set to two lines and this one to
+   one, so capping THAT heading's measure is what makes it wrap. A width rather than a
+   <br>, so the swap slot underneath still holds a plain sentence. */
+#s3-sub-area-blocks .hp-services > li:nth-child(3) .hp-service__name{
+  max-width: 62%;
+  margin-inline: auto;
+}
+
+
+/* ---- B5-8. "MORE ABOUT THE PRACTICE" AS PANELS ---------------------------
+   Item 9: "Give each box a visible background treatment so the cards are easier to
+    distinguish. Use the same exact box/background treatment as the 'Before Your First
+    Visit' section on the homepage, but without the buttons."
+   EXACT, SO THESE ARE THAT SECTION'S DECLARATIONS, value for value: an OPAQUE
+   background-colour on the element itself, the photograph over it at z-index 0, the
+   scrim at 1 and the content lifted to 2. The opacity is not decoration , the note at
+   Part 2's 1d records that a panel whose darkness lives only in a pseudo-element
+   underneath it reads as white-on-white to every checker that resolves a backdrop by
+   walking ancestors, and failed rverify at 1.06:1 on all four widths when it was built
+   that way. Same construction, same reason.
+   NO BUTTON IS ADDED, as instructed. These cards were already whole-card links and
+   stay whole-card links; the hairline that used to be their only structure comes off,
+   because the panel edge now does that work and keeping both reads as two rules. */
+.hp-rails > li > .hp-rail{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-top:0;
+  border: var(--edge-soft);
+  border-color: rgba(255,255,255,.16);
+  border-radius: var(--r-panel);
+  box-shadow: var(--lift-raised);
+  padding: var(--sp-6) var(--sp-5) var(--sp-5);
+  background-color: var(--ds-primary-deep);
+}
+.hp-rails > li > .hp-rail > *{
+  position:relative;
+  z-index:2;
+}
+.hp-rails > li > .hp-rail::before{
+  content:"";
+  position:absolute; inset:0; z-index:0;
+  background-image: var(--v3-flowphoto);
+  background-size:cover;
+  background-position: var(--v3-flowphoto-pos, 50% 40%);
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+.hp-rails > li > .hp-rail::after{
+  content:"";
+  position:absolute; inset:0; z-index:1;
+  background-color: color-mix(in srgb, var(--ds-primary-deep) 52%, transparent);
+  background-image:linear-gradient(to bottom,
+    color-mix(in srgb, var(--ds-primary-deep) 66%, transparent)  0%,
+    color-mix(in srgb, var(--ds-primary-deep) 52%, transparent) 42%,
+    color-mix(in srgb, var(--ds-primary-deep) 22%, transparent) 74%,
+    color-mix(in srgb, var(--ds-primary-deep) 10%, transparent)100%);
+  pointer-events:none;
+}
+/* rgba() rather than color-mix() on TEXT, for the reason Part 2 records: color-mix()
+   serialises as color(srgb 1 1 1 / .86) and three contrast checkers in this toolchain
+   read that as rgb(1,1,1), i.e. near-black on near-black. Identical rendered output. */
+.hp-rails > li > .hp-rail .hp-rail__label{ color:#FFFFFF; }
+.hp-rails > li > .hp-rail .hp-rail__line{ color: rgba(255,255,255,.86); }
+/* two lines each, so the three panels are level top and bottom. The copy is cut to
+   match in the markup; this stops a reservation reintroducing what the cut removed. */
+.hp-rails > li > .hp-rail .hp-rail__line{
+  min-height: calc(2em * var(--ds-lh-body));
+}
+
+
+/* ---- B5-9. "ARRANGING AN APPOINTMENT" ------------------------------------
+   Item 11: "Stack the telephone number and email vertically and keep everything
+    center-aligned ... Retain the 'Find Us' button underneath, but make its width
+    consistent with the other buttons across the site and slightly longer."
+   The two values are one centred sentence now rather than a two-up row, so the row
+   layout comes off and the block is centred on its own measure. */
+#s5-routing-band .hp-channels--sentence{
+  display:block;
+  max-width: 46ch;
+  margin-inline:auto;
+  text-align:center;
+}
+#s5-routing-band .hp-channels--sentence .hp-channel{
+  margin:0;
+  /* text-wrap:pretty refuses to leave a single short item on the last line, which is the
+     class of defect this sentence produces: the address is one unbreakable token and the
+     full stop after it is the only thing with anywhere to go. */
+  text-wrap: pretty;
+}
+/* AND THE ADDRESS IS STEPPED DOWN ON NARROW SCREENS, because pretty can only rearrange
+   what has a break opportunity and this line has none inside it. Measured at 390: the
+   content box is about 350px, "or email " takes roughly 62 of it, and the address sets at
+   about 300px at the body size , so the line is already at the edge and the stop is pushed
+   off it on its own. At 15px the address needs about 265px and the whole clause, stop
+   included, fits one line.
+   The step is scoped to the widths where it is needed. Above 560 the address renders at the
+   same size as the sentence around it, which is what item 5 asks for in the footer and what
+   this band already did. */
+@media (max-width:560px){
+  #s5-routing-band .hp-channels--sentence .hp-mail{
+    font-size: 15px;
+  }
+}
+
+/* THE BUTTON, AND THE WIDTH IS CHANGED SITE-WIDE ON PURPOSE. Measured first: this
+   button is 184px, which is .hp-go's min-width, and so is every other solid button on
+   a page body , they were already consistent. The instruction asks for consistent AND
+   slightly longer, and the only way to have both is to move the floor rather than this
+   one button, so 184 becomes 208 everywhere. The pair inside the home page's flow
+   panels is unaffected: .hp-flow__steps .hp-go releases the min-width and lets its grid
+   column decide, which is what makes those four identical. */
+.hp-go{
+  min-width: 208px;
+}
+
+
+/* ---- B5-10. "WHERE THE WORK HAPPENS" -------------------------------------
+   Item 12: "Reduce the gap between the heading and its supporting text. The current
+    spacing is too large. Make the background image more visible."
+
+   10a. THE GAP, MEASURED: 64px between the heading's foot and the first line, which is
+   .hp-head's own bottom margin at full band spacing being spent inside a plate. Inside
+   a bounded panel that reads as a hole rather than as air. It comes down to about 26. */
+#s6-where-the-work-happens .hp-head{
+  margin-bottom: clamp(20px, 2.2vw, 28px);
+}
+
+/* 10b. THE PHOTOGRAPH, AND WHAT WAS ACTUALLY DIMMING IT. Measured before changing
+   anything: the image's own opacity is 1 and the flat veil over it is 30% white, so
+   the picture was already reading at about seven tenths in the open parts of the band.
+   What made it look washed out is the SECOND layer , .hp-photo__edge paints solid
+   --ds-bg-surface at 0% and 100% and only reaches transparent at 12% and 88%, so on a
+   500px band nearly a quarter of the frame is painted flat white before the veil is
+   applied at all.
+   Both come down: the veil from 30% to 12%, and the edge's white bands from 12% to 6%
+   at each end. The plate keeps its own 86% white ground, so the three sentences on it
+   are as legible as they were , this changes what is behind the panel, never what is
+   under the text. Scoped to this band so no other paper photoband moves. */
+#s6-where-the-work-happens .hp-photo__scrim{
+  background-color: color-mix(in srgb, var(--ds-bg-surface) 12%, transparent);
+}
+#s6-where-the-work-happens .hp-photo__edge{
+  background-image:linear-gradient(180deg,
+    var(--ds-bg-surface) 0%,
+    transparent          6%,
+    transparent         94%,
+    var(--ds-bg-surface) 100%);
+}
+
+
+/* ---- B5-11. RESPONSIVE ---------------------------------------------------
+   This layer is appended to the LAST sheet each page loads, so anything written here
+   without a scope outranks every ladder beneath it. The narrow-width releases below
+   are the same shape as batch 4's. */
+@media (max-width:900px){
+  /* the three rails stack; each keeps its panel treatment and its opaque ground. */
+  .hp-rails > li > .hp-rail{ background-color: var(--ds-primary-deep); }
+}
+@media (max-width:768px){
+  /* one column of full-width cards: a reservation that levels a row has nothing to
+     level, and the numeral comes back down with the card. */
+  .hp-find__line{ min-height:0; }
+  .hp-rails > li > .hp-rail .hp-rail__line{ min-height:0; }
+  #s9-compare-teaser .hp-note::before{ font-size: clamp(112px, 26vw, 150px); }
+  .cc-mast__list{ grid-auto-flow: row; grid-template-rows: none; }
+  .hp-go{ min-width: 0; }
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 6 , the sixth batch of owner revisions.
+
+   SOURCE: seven numbered instructions with five annotated screenshots, mostly on
+   the "What we do" page plus the shared hero ramp and the shared footer.
+
+   MARKUP TOUCHED BY PART 6:
+     - services.content.html s4: two rail sentences cut to one line (4).
+     - services.content.html s5: the two channel values fold back INTO the booking
+       sentence, one paragraph, and the detached .hp-channels block is deleted (5).
+   Everything else in Part 6 is CSS.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B6-1. THE HERO RAMP, SOFTENED -------------------------------------
+   Item 1: "Soften the gradient in the hero section and make it fade more gradually.
+    Right now, the transition from the blue area to the transparent part is too
+    strong and abrupt. Apply this softer gradient treatment to the hero sections
+    across all pages."
+   WHY IT READS AS AN EDGE WHEN IT IS ALREADY A RAMP. The ramp was four stops , flat
+   to 48%, then straight to the open value by 66% , which is 259px of travel at 1440
+   and ought to be gentle. It is not, because a two-stop interpolation moves alpha
+   LINEARLY and the eye does not read alpha linearly: most of the perceived change
+   happens in the first third of the run, so a linear ramp puts a visible shoulder at
+   the top of it. That shoulder is what the owner's box is drawn around.
+   NINE STOPS ON AN EASED CURVE instead of two, and the run is stretched from 18% of
+   the frame to 50% of it. The plateau still ends at 44%, which still covers every
+   glyph , measured, the longest headline line ends at 45.5% on the home page and
+   about 41% on this one , and from there the ink comes off gradually enough that
+   there is no step to see.
+   THE SELECTOR IS ALREADY SITE-WIDE, which is what "across all pages" asks for:
+   .hp-band--hero .hp-ground--ink matches every hero on the site, so this one rule
+   changes all of them. Contrast is re-measured on both heroes afterwards. */
+.hp-band--hero .hp-ground--ink .hp-photo__scrim{
+  background-image:linear-gradient(90deg,
+    var(--hp-ink-plateau)  0%,
+    var(--hp-ink-plateau) 44%,
+    color-mix(in srgb, var(--ds-primary-deep) 78%, transparent) 52%,
+    color-mix(in srgb, var(--ds-primary-deep) 66%, transparent) 59%,
+    color-mix(in srgb, var(--ds-primary-deep) 52%, transparent) 65%,
+    color-mix(in srgb, var(--ds-primary-deep) 38%, transparent) 71%,
+    color-mix(in srgb, var(--ds-primary-deep) 25%, transparent) 78%,
+    color-mix(in srgb, var(--ds-primary-deep) 15%, transparent) 85%,
+    color-mix(in srgb, var(--ds-primary-deep)  8%, transparent) 92%,
+    var(--hp-ink-open)   100%);
+}
+
+/* 1b. THE SERVICES HERO MOVES LEFT. Item 1's last clause, and it is this page's
+   picture rather than every hero, because it is the one the instruction is
+   illustrated against.
+   object-position CAN do it here, which is worth saying because on the home hero it
+   could not. Measured: this frame is 2000x667, a 3:1 picture, in a band about
+   1440x790, so cover scales it to HEIGHT and crops it horizontally , 2370px of image
+   across a 1440px box, which is 930px of travel. The home page's 16:9 hero in a
+   taller band crops the other way and has almost none.
+   34% to 46% walks the crop window 112px further into the picture, which moves the
+   model and the hands 112px LEFT on screen and closes the empty strip the owner's
+   box is drawn around. */
+#s1-hero-category-outcome .hp-photo__img{
+  object-position: 46% 50%;
+}
+
+
+/* ---- B6-2. THE EMPHASIS GOES BLUE --------------------------------------
+   Item 2: "Make the bold words/phrases blue."
+   --ds-accent-ink is the SOLID accent this design system already uses for emphasis
+   on a light ground; it is what .hp-key falls back to when its gradient cannot
+   paint. Taking the token rather than a hex keeps the three emphasised phrases the
+   same blue as the headline beside them.
+   THE WEIGHT STAYS AT 600. Colour alone is never the carrier here , a reader who
+   cannot separate the blue from the black still sees the emphasis in the weight ,
+   and dropping to normal weight while adding colour would have traded one signal for
+   another rather than adding one. Contrast is measured on the paper ground after. */
+.hp-em{
+  color: var(--ds-accent-ink);
+}
+
+
+/* ---- B6-3. THE SERVICE CARDS, REPLICATED FROM THE HOME PAGE ------------
+   Item 3: "Fix the card alignments. 'Restorative Work' is currently not aligned with
+    the other cards. Copy the exact same cards, layout, styling, spacing, and
+    treatment used in the 'What This Practice Does' section on the homepage."
+
+   WHAT WAS ACTUALLY MISALIGNED, MEASURED. The four heading boxes on this page sit at
+   x=205 / 481 / 795 / 1033 and are 202 / 202 / 125 / 202px wide. Card 3 is the odd
+   one and it is MY rule that made it so: batch 5 capped that heading's measure at 62%
+   to force "Restorative work" onto two lines, and centred the narrowed box with auto
+   margins. On the home page the card text is CENTRED, so a narrower centred box is
+   invisible. On this page the card text is LEFT-aligned, so the same box is centred
+   inside a left-aligned column and the heading ends up indented 38px from its own
+   sentence. Every other card's heading starts on the sentence's left edge; card 3's
+   does not. That is the misalignment, and it is one width and one alignment, not a
+   spacing problem.
+   THE FIX IS THE ONE ASKED FOR: this section takes the home page's treatment rather
+   than a patch of its own. Centred body text, and the same rebuilt card scrim. Both
+   were already written for the home page; they are extended to this section by
+   selector rather than copied, so the two sections cannot drift apart again , which
+   is how they drifted in the first place (the home page's scrim was rebuilt in batch
+   1 under a --service modifier class this page's markup does not carry). */
+#s3-sub-area-blocks .hp-cardscrim{
+  background-image:linear-gradient(to top,
+    color-mix(in srgb, var(--ds-primary-deep) 95%, transparent)  0%,
+    color-mix(in srgb, var(--ds-primary-deep) 91%, transparent) 30%,
+    color-mix(in srgb, var(--ds-primary-deep) 78%, transparent) 52%,
+    color-mix(in srgb, var(--ds-primary-deep) 48%, transparent) 72%,
+    color-mix(in srgb, var(--ds-primary-deep) 16%, transparent) 88%,
+    transparent 100%);
+}
+#s3-sub-area-blocks .hp-service__body{
+  text-align: center;
+}
+#s3-sub-area-blocks .hp-service__name,
+#s3-sub-area-blocks .hp-service__line{
+  margin-inline: auto;
+  text-align: center;
+}
+
+
+/* ---- B6-4. THE RAILS, ONE LINE EACH ------------------------------------
+   Item 4: "Keep each question and answer on one line only. Keep everything else in
+    the section exactly the same."
+   The two long sentences are cut in the markup. The remaining offender is the LABEL:
+   measured, "Questions and answers" sets to two lines where "About us" and "Who
+   you'll see" set to one, because at the card heading size it needs more than the
+   253px the three-up column gives it.
+   THE LABEL STEPS DOWN, THE REST DOES NOT MOVE. "Keep everything else exactly the
+   same" is the constraint, so nothing here touches the panel, the photograph, the
+   scrim, the padding or the sentence , only the size of the one string that will not
+   fit, and only on this page's rails. */
+#s4-cross-link-rail .hp-rail__label{
+  font-size: clamp(19px, 1.55vw, 22px);
+}
+/* one line each means no reservation is doing anything, and a two-line floor under a
+   one-line sentence is dead space at the foot of every panel. */
+#s4-cross-link-rail .hp-rails > li > .hp-rail .hp-rail__line{
+  min-height: 0;
+}
+
+
+/* ---- B6-5. THE APPOINTMENT PARAGRAPH -----------------------------------
+   Item 5: the two values are inline in the sentence now (markup), "and should use the
+   same font size as the subtext".
+   .hp-channel set its own size, which is why the two links rendered at 19.44px inside
+   a 17px paragraph. That element is gone; these two rules make sure the anchors take
+   the paragraph's size rather than any size of their own, wherever else on this band
+   they may inherit one. */
+#s5-routing-band .hp-lead .hp-tel,
+#s5-routing-band .hp-lead .hp-mail{
+  font-size: inherit;
+  line-height: inherit;
+}
+
+
+/* ---- B6-6. THE WHITE OVERLAYS COME OFF ---------------------------------
+   Item 6: "Remove the white gradients/overlays from the background image in this
+    section so the image appears naturally without the white fade."
+   Two layers, both removed rather than reduced: the flat veil batch 5 took from 30%
+   to 12%, and the edge gradient that paints solid --ds-bg-surface across the top and
+   bottom of the band. The photograph now renders at its own strength edge to edge.
+   THE TEXT IS UNAFFECTED AND THAT IS BY CONSTRUCTION, not by luck. The three
+   sentences sit on .hp-plate--paper, which carries its own 86% white ground and its
+   own shadow; the two layers coming off are BEHIND that plate, never under the type.
+   Contrast on this band is re-measured afterwards all the same. */
+#s6-where-the-work-happens .hp-photo__scrim{
+  background-color: transparent;
+  background-image: none;
+}
+#s6-where-the-work-happens .hp-photo__edge{
+  background-image: none;
+}
+
+
+/* ---- B6-7. THE FOOTER ---------------------------------------------------
+   Item 7: "Do not underline the links. The 'e' in the example email address is
+    currently getting cut off and pushed onto a third line , fix this so the full
+    email displays properly. Keep 'Monday to Thursday 8:00 to 17:00' on one line only.
+    Also, make all footer text approximately 10% smaller while keeping the footer
+    balanced, centered, and neatly aligned."
+
+   7a. THE UNDERLINE IS A BORDER, NOT A TEXT DECORATION. Checked before removing it:
+   text-decoration-line already computes to none on these links; the rule is
+   .cc-a { border-bottom: 1px solid ... ; padding-bottom: 1px }. Taking the border off
+   and the padding with it, in the masthead only , .cc-a is used elsewhere on the site
+   and item 7 is about the footer. The hover state keeps a colour change, so the links
+   still answer a pointer without a rule under them. */
+.cc-mast .cc-a{
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.cc-mast .cc-a:hover,
+.cc-mast .cc-a:focus-visible{
+  color: var(--ds-accent-light);
+}
+
+/* 7b. TEN PER CENT OFF EVERY STRING IN THE BLOCK, labels included, so the reduction
+   is uniform rather than applied to the values and forgotten on the keys. */
+.cc-mast__v,
+.cc-mast__list,
+.cc-mast__list .cc-a,
+.cc-mast__v .cc-a{
+  font-size: calc(var(--ds-fs-fine) * 0.9);
+}
+/* 7d. "PRACTICE AND TOWNADDRESS" , THE COLLISION IN THE OWNER'S SCREENSHOT, AND WHY MY
+   FIRST PROBE SAID THERE WAS NONE. I measured the gap between label ELEMENT boxes and got a
+   clean 24px at every width. .cc-mast__k is display:block and fills its whole grid track, so
+   a box-to-box test can only ever return the column gap and can NEVER report this defect.
+   Measured on GLYPH extents instead, which is what a reader sees: "Practice and town" paints
+   from x=180 to x=332 in a track that ends at 306 , 26px outside its own column , and
+   "Address" begins at 330. They touch. It collides at 1101, 1280 and 1440 alike.
+   THE CAUSE IS white-space:nowrap, ADDED IN BATCH 3 and unexamined since. Batch 3's item A5
+   put it on this label to stop the keys breaking mid-phrase, and at the five-column widths
+   it had then that was free. The columns have narrowed twice since, so it is no longer a
+   preference, it is an instruction to overflow.
+   The label wraps again, and the two-line floor batch 3 removed at the same moment comes
+   back with it, so the five VALUE blocks still start on one line whether their key takes one
+   row or two. That is the "neatly aligned" half of item 7, and it is what the nowrap was
+   protecting before it started costing more than it bought. */
+.cc-mast__k{
+  font-size: calc(var(--ds-fs-eyebrow) * 0.9);
+  white-space: normal;
+  min-height: calc(2em * 1.35);
+}
+
+/* 7c. THE TWO STRINGS THAT MUST NOT BREAK, AND WHY THE TRACKS MOVE AGAIN. Measured at
+   1120, which is the narrow end of the five-column range and where the owner's
+   screenshot was taken: the email set to TWO lines and the opening hours to FIVE,
+   against one and four at 1440. So both failures are width, not size, and the ten per
+   cent reduction alone does not settle them , it buys about 20px on each string while
+   the shortfall at 1120 is larger than that on the hours.
+   Re-solved against the reduced size. At 1120 the row has about 896px of track after
+   four 24px gaps. The email needs roughly 194px at 12.6px and "Monday to Thursday
+   8:00 to 17:00" about 185px, so columns three and four are given 1.05fr and 1.00fr
+   of 4.54 , 207px and 197px , and the two short columns drop to 0.62fr each, which
+   they can afford because both of their values already wrap to two lines by design.
+   The page list keeps 1.25fr = 247px, which holds its two columns of six links at the
+   smaller size.
+   minmax(0,..) on every track, for the reason batch 5 had to learn twice: a bare fr
+   carries a min-content floor and the longest unbreakable string, not the fraction,
+   ends up deciding the width. */
+/* THE EMAIL DID NOT SHRINK WITH THE REST, and the reason is a selector I wrote myself.
+   Batch 5 left `.cc-mast__v a[href^="mailto:"] { font-size: var(--ds-fs-fine) }` in place ,
+   an attribute selector at (0,2,1) , and the ten-per-cent rule above is a class list at
+   (0,2,0). Measured after applying it: every other value read 12.6px and the address still
+   read 14px, so it kept needing 216px in a track sized for 194. Restated at the same
+   specificity so source order decides. */
+.cc-mast__v a[href^="mailto:"]{
+  font-size: calc(var(--ds-fs-fine) * 0.9);
+}
+
+/* AND THE TRACKS ARE RE-SOLVED AT THE NARROW END RATHER THAN AT 1440, because that is
+   where both failures live. Measured after the first pass: at 1280 and 1440 the hours
+   already sit on their three authored lines, and only at 1120 does one of them wrap , the
+   row is 991px wide there against 1180 at 1440, and column four came out 197px where
+   "Monday to Thursday 8:00 to 17:00" needs a little over 200 at the reduced size.
+   Two changes, both aimed at the narrow end: the column gap drops from 24px to 16px below
+   1280, which returns 32px to the tracks, and the fractions shift a little weight from the
+   two columns whose values already wrap by design into the two that must not wrap.
+   At 1120 that gives 119 / 119 / 215 / 225 / 250 , the address needs 194, the hours line
+   about 205, and the page list's two columns about 216. All four fit with room. */
+@media (min-width:1101px){
+  .cc-mast{
+    grid-template-columns:
+      minmax(0, 0.58fr)
+      minmax(0, 0.58fr)
+      minmax(0, 1.05fr)
+      minmax(0, 1.10fr)
+      minmax(0, 1.22fr);
+  }
+}
+@media (min-width:1101px) and (max-width:1279px){
+  .cc-mast{ column-gap: var(--sp-3); }
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 7 , the seventh batch, and the one that comes with a STANDING RULE.
+
+   THE GLOBAL CARD ALIGNMENT RULE, in the owner's words: "Headlines within the same
+   card group must have a consistent number of lines. Subtexts within the same card
+   group must also have a consistent number of lines ... Prioritize the layout used by
+   the majority of the cards rather than allowing one card to break the alignment.
+   Adjust copy slightly when necessary instead of forcing uneven card heights or text
+   positions ... Do this automatically whenever you encounter a group of cards. I do
+   not want to repeat this instruction for every section."
+   IT IS ANSWERED IN THE COPY, NOT HERE, and that is the point of it. A min-height can
+   level a row's top OR its bottom and cannot make unequal blocks equal; only equal
+   copy does that. So this batch evened the SENTENCES in every card group it touched ,
+   the About values, the team people, the team boxes, the rails on three pages , and
+   the CSS below only stops a reservation putting back what the copy edit removed.
+   The rule is also written to this session's memory so it survives the conversation.
+
+   MARKUP TOUCHED BY PART 7:
+     - about: the visit and order paragraphs shortened + .hp-em highlights; the three
+       value lines evened; the "Who you'll see" box loses its sentence; the malformed
+       --imagefade-img attribute on s3 repaired.
+     - team: fal hero; two people sentences evened; s6 headline and all three boxes
+       rewritten; the Questions-and-answers button removed; four rails given
+       photographs and supporting lines.
+     - faq: fal hero; "Before you call" becomes the homepage timeline component; the
+       appointment-questions paragraph shortened + highlighted; three rails given
+       photographs and supporting lines; the first-time band given the shared
+       .hp-clinic ground.
+     - contact: fal hero.
+     - chrome: the "Questions" trigger becomes an <a href>.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B7-1. TWO HEADINGS PULLED DOWN TO THEIR OWN COPY --------------------
+   Items 5 and 8/9: "Reduce the vertical gap between the headline and supporting text.
+   Keep the spacing tighter and more visually connected."
+   Both are plates, and both were spending a full band's heading margin inside a
+   bounded panel, which reads as a hole rather than as air , the same defect batch 5
+   found on the services page's closing plate and fixed with the same number. */
+#s2-persona-pillars .hp-head,
+#s7-asking-for-someone .hp-head{
+  margin-bottom: clamp(20px, 2.2vw, 28px);
+}
+
+
+/* ---- B7-2. THE FAQ PAGE'S ANSWERS TAKE THE HOME PAGE'S TREATMENT ---------
+   Item 12: "Make this section look exactly like the 'Practical Questions' section on
+   the homepage. Copy the existing component/design rather than approximating it."
+   The markup was ALREADY the same component , .hp-faqs holding <details class="hp-faq">
+   rows , so what differed was only the layout the home page wraps around it, which was
+   written id-scoped in batch 4. The same declarations are extended to this section.
+   SCOPING NOTE, because this id is not unique across the site: #s3-sub-area-blocks is
+   ALSO the services page's card band. Every rule below therefore names a component
+   class that exists only on the FAQ page's copy of that id, so none of them can reach
+   the service cards. Checked rather than assumed. */
+#s3-sub-area-blocks .hp-faqs{
+  display:grid;
+  grid-template-columns: minmax(0,1fr);
+  gap:0;
+  width:100%;
+  max-width: 78ch;
+  margin-inline:auto;
+  align-items:start;
+  text-align:left;
+}
+#s3-sub-area-blocks .hp-faqs > li{
+  display:block;
+  width:100%;
+}
+#s3-sub-area-blocks .hp-faq{
+  border-bottom: 1px solid rgba(255,255,255,.18);
+}
+#s3-sub-area-blocks .hp-faq > summary.hp-faq__q{
+  font-size: clamp(17px, 1.35vw, 20px);
+  padding-block: var(--sp-4);
+  color:#FFFFFF;
+  text-align:left;
+}
+#s3-sub-area-blocks .hp-faq > summary.hp-faq__q h3{
+  margin:0;
+  font-size:inherit;
+  line-height:1.4;
+  font-weight:600;
+  color:inherit;
+  text-align:left;
+}
+/* rgba() rather than color-mix() on TEXT, for the reason Part 2 records. */
+#s3-sub-area-blocks .hp-faq .hp-faq__a{
+  color: rgba(255,255,255,.88);
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+  text-align:left;
+}
+#s3-sub-area-blocks .hp-faq .hp-faq__a a{
+  color:#FFFFFF;
+  text-decoration-color: rgba(255,255,255,.55);
+}
+
+
+/* ---- B7-3. THE RAILS, ONE DEFINITION ON THREE PAGES ----------------------
+   "Copy the exact design ... using its corrected/final version as the source of truth.
+   Do not create a different variation of this section."
+   The panel treatment itself is already unscoped , .hp-rails > li > .hp-rail , so the
+   team and FAQ copies took it the moment their markup gained the photograph property.
+   Only two things were still scoped to the services page's id, and they are widened
+   here rather than duplicated, so there is one definition of each. */
+#s4-cross-link-rail .hp-rail__label,
+#s5-cross-link-rail .hp-rail__label{
+  font-size: clamp(19px, 1.55vw, 22px);
+}
+/* THE TEAM PAGE ROUTES TO FOUR DESTINATIONS, so its cards are a quarter of the row rather
+   than a third and its labels have about 70px less to work with. Measured at 1440: the three
+   short labels set to one line and "Questions and answers" to two, which is the outlier the
+   standing rule is about. The label steps down on THIS row only, which is the smallest change
+   that levels it , the alternative was cutting a canonical navigation label, and those are
+   fixed strings this build does not paraphrase. */
+#s4-ecosystem-block .hp-rail__label{
+  font-size: clamp(15px, 1.15vw, 16.5px);
+}
+/* AND THE PADDING GIVES, NOT THE TYPE, for the last four pixels. Measured at 16.5px the
+   label needs about 190px and the card offered 186 , a 252px card less 32px of padding on
+   each side. Stepping the type again to buy four pixels would have made this row visibly
+   smaller than the same component on two other pages for no reason a reader could see.
+   The inline padding comes down to 24px instead, which gives the label a 204px box and
+   leaves 14px of margin. Padding stays identical across all four cards in the group, which
+   is what the standing rule asks; it differs from the three-up rows on the other pages
+   because a four-up row has less width to spend, not because it drifted. */
+#s4-ecosystem-block .hp-rails > li > .hp-rail{
+  padding-inline: var(--sp-4);
+}
+/* every rail sentence on every page is one line now, so a two-line floor is dead space
+   at the foot of every panel. Released globally rather than per page. */
+.hp-rails > li > .hp-rail .hp-rail__line{
+  min-height: 0;
+}
+
+/* 3b. FOUR RAILS, FOUR COLUMNS. The team page routes to four destinations where the
+   other two route to three, and the shared grid is repeat(3, ...), so its fourth card
+   dropped onto a row of its own , one card wide, against a row of three above it. That
+   is precisely the "one card breaking the alignment" the standing rule is about, so
+   the row is sized to the number of cards in it rather than the copy being cut to
+   three destinations. Below 900 the shared ladder stacks them all anyway. */
+@media (min-width:901px){
+  #s4-ecosystem-block .hp-rails{
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: var(--sp-4);
+  }
+}
+
+
+/* ---- B7-4. "WHAT WE KEEP TO", THE THREE BOXES ---------------------------
+   "Fix the internal padding and spacing across all three boxes so they are perfectly
+   consistent. Make the text slightly smaller if necessary to improve alignment and
+   breathing room."
+   One padding value on all three, stated rather than inherited from three different
+   places, and the sentence steps down about 8% so three evened lines sit comfortably
+   inside the box instead of filling it to the edges. The three sentences themselves
+   were evened to 58 / 60 / 58 characters in the markup, which is what actually makes
+   the row level; this gives the result room to breathe. */
+.hp-values > .hp-value{
+  padding: var(--sp-5);
+}
+.hp-value__line{
+  font-size: clamp(15px, 1.15vw, 16px);
+  line-height: 1.55;
+}
+
+
+/* ---- B7-5. THE TEAM PAGE'S THREE BOXES ----------------------------------
+   Item 7 rewrote their words; this keeps the three of them level. The sentences were
+   evened to 65 / 66 / 63 characters, so nothing needs reserving , and the name and
+   role rows are given a shared floor so the three sentences start on one line whatever
+   each label happens to measure. */
+.hp-asks > .hp-ask .hp-ask__name{
+  min-height: calc(1em * var(--ds-lh-head));
+}
+.hp-asks > .hp-ask .hp-ask__line{
+  min-height: 0;
 }
 
 
