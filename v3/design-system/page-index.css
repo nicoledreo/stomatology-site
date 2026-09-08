@@ -4607,9 +4607,15 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    64 is given back to the floor: the sentence moves up 28px and the space below it
    grows from 40 to 68, so it reads as attached to its heading and clear of the
    seam. */
-#s11-stance-line .hp-stance{
-  margin-top: calc(-1 * var(--sp-5));
-}
+/* THE NEGATIVE PULL ON THE STANCE LINE IS WITHDRAWN. Batch 4 added margin-top:-32px to
+   close the gap under this heading while .hp-head still carried a 64px margin. Batch 9
+   brought that margin down to 44px site-wide, so the -32px is now pulling against a gap
+   that has already closed: measured at 375px the heading and the sentence OVERLAP, the h2
+   painting through "Alder Grove Dental is a dental practice in Riverbend" by 335x8px.
+   G-OVERLAP caught it.
+   THIS IS WHAT A MAGIC NUMBER COSTS when the thing it was calibrated against moves. The
+   shared reduction now does the job the negative margin was doing, so the negative margin
+   goes rather than being re-tuned to a second number that will drift the same way. */
 #s11-stance-line .hp-wrap{
   padding-bottom: clamp(44px, 4.6vw, 68px);
 }
@@ -5487,9 +5493,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    leaves 14px of margin. Padding stays identical across all four cards in the group, which
    is what the standing rule asks; it differs from the three-up rows on the other pages
    because a four-up row has less width to spend, not because it drifted. */
-#s4-ecosystem-block .hp-rails > li > .hp-rail{
-  padding-inline: var(--sp-4);
-}
+/* (the team-specific padding override is gone: the shared rule above now carries it) */
 /* every rail sentence on every page is one line now, so a two-line floor is dead space
    at the foot of every panel. Released globally rather than per page. */
 .hp-rails > li > .hp-rail .hp-rail__line{
@@ -5538,6 +5542,545 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
 }
 .hp-asks > .hp-ask .hp-ask__line{
   min-height: 0;
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 8 , the eighth batch: the rails at wide viewports, the hours plate's type,
+   and the About page's photographic band.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B8-1. THE RAILS WRAP ONLY ABOVE 1600, AND HERE IS WHY ---------------
+   "make all subtexts one liners so they are all aligned, align headlines and subtexts
+    across all boxes, move down the texts a little more"
+
+   MEASURED ACROSS FOUR WIDTHS, because one width is what let this ship in the first
+   place. The card and its content box are IDENTICAL at every viewport , the reading
+   measure is capped at 1080px, so the card is 317px and the box inside its padding is
+   251px at 1440, 1600, 1860 and 2200 alike. What is NOT identical is the type: the
+   sentence renders at 17px up to about 1600 and at 18px beyond it, because its size is
+   a vw clamp whose ceiling sits above the width at which the container stops growing.
+       @1440  box 251   sentences need 251 / 229 / 239  ->  1 / 1 / 1 lines
+       @1860  box 251   sentences need 266 / 243 / 253  ->  2 / 1 / 2 lines
+   Above 1600 the type outgrows a box that cannot follow it, two of the three sentences
+   wrap, and because this card's content is anchored to its floor the two that wrapped
+   push their headings 29px above the one that did not. The misalignment in the owner's
+   screenshot IS the wrap; it is not a second defect.
+   A vw CEILING ONLY MAKES SENSE WHILE THE CONTAINER IS STILL GROWING. Past 1080px of
+   measure it is a promise the layout cannot keep. Capped at 16px the longest sentence
+   needs about 236px in a 251px box , 15px of real margin, where at 17px it needed 251
+   in 251. That was not fitting; it was luck, and it ran out at 1860.
+   THIS ALSO ANSWERS "align headlines and subtexts" with no rule of its own: equal line
+   counts in a floor-anchored card put every heading and every sentence on one line. */
+.hp-rails > li > .hp-rail .hp-rail__line{
+  font-size: clamp(15px, 1.1vw, 16px);
+}
+
+/* 1b. AND THE TEXT MOVES DOWN. Measured: the copy ended 38px above the card floor, and
+   that 38px is the card's own bottom padding. It comes down to 16px, so the block sits
+   closer to the foot of the panel. The top padding is untouched, so the photograph
+   keeps its head room. */
+.hp-rails > li > .hp-rail{
+  padding-bottom: var(--sp-3);
+  /* AND THE INLINE PADDING COMES DOWN TO MATCH THE TEAM PAGE, which fixes two things at
+     once. Measured after capping the type: the longest sentence needed 237px in a 236px
+     box , it rendered on one line by a single pixel, which is the same luck that failed
+     at 1860 in the first place and is not a fix. At 24px of inline padding the box is
+     269px and the margin is a real 32.
+     It also UNIFIES the three copies of this section: the team page was already stepped to
+     24px in batch 7 to fit a four-up row, so services and FAQ were the odd ones out. One
+     padding value on all three is what "do not create a different variation" asks for. */
+  padding-inline: var(--sp-4);
+}
+
+
+/* ---- B8-2. THE HOURS PLATE, ONE SIZE FOR THE VALUES ----------------------
+   "make all text sizes here consistent, but keep alignment. The phone number looks too
+    big"
+   MEASURED, and the owner's eye is right to the pixel. Inside that box at 1440:
+       ADDRESS / TELEPHONE / OPENING HOURS   12.5px    (the label style)
+       114 Alder Street, Riverbend           17px
+       (555) 555-0142                        19.44px   <- the odd one out
+       Mon-Thu   8:00-17:00                  17px
+   Three of the four values sit at 17px and the telephone sits at 19.44, because .hp-tel
+   carries a size of its own from the component it was borrowed from. It is the only
+   thing in the box bigger than its neighbours, which is exactly what "looks too big"
+   describes.
+   WHAT "CONSISTENT" IS TAKEN TO MEAN, said plainly because it is a judgement rather
+   than a reading: the three VALUES become one size. The three LABELS stay at 12.5px,
+   because they are a different kind of thing , small caps naming the field rather than
+   stating it , and flattening them into the values would destroy the label/value
+   distinction the box is built on and with it the alignment the same instruction asks
+   to keep. If the labels were meant to grow too, that is one line and worth a word.
+   font-size:inherit rather than a number, so the value tracks its siblings at every
+   width instead of pinning a size that is right at 1440 and wrong at 1860. */
+#s8-location-and-hours .hp-tel,
+#s8-location-and-hours .hp-mail{
+  font-size: inherit;
+  line-height: inherit;
+}
+
+
+/* ---- B8-3. THE HEADING GAP, FIXED AS A CLASS RATHER THAN ONE AT A TIME ---
+   "can you identify very similar scenarios across the site for sections that look like
+    this, and fix huge gaps like this"
+
+   MEASURED EVERY HEADING ON THE SITE , all 35 of them across six pages , rather than
+   chasing the three the owner has now pointed at individually. It is ONE defect with
+   one cause: .hp-head carries margin-bottom:64px, which is a BAND rhythm value, and it
+   is spent unchanged in places that are not bands.
+   THE MEASUREMENT SPLITS CLEANLY INTO THREE, and only two of them are wrong:
+     1. HEADING INSIDE A BOUNDED PANEL , 67 / 67 / 64 / 64px on about s2, contact s4,
+        index s8 and index s12. Inside a plate, 64px of band rhythm is a hole. Three
+        other plates were already brought to 28px one at a time in earlier batches,
+        which is how it became obvious this wanted a rule instead of a list.
+     2. HEADING DIRECTLY ABOVE A PARAGRAPH , about s3 (67), faq s6 (67), services s5
+        (64), faq s7 (61), and services s2 / faq s4 at 129px where the head margin and
+        a panel's own top padding stack. A heading and the single sentence that explains
+        it are one unit; 64px reads as two.
+     3. HEADING ABOVE A CARD GRID , index s2/s3/s5/s7, services s3/s4, team s3/s4/s6,
+        faq s3/s5 and the rest, all at 64px. THIS ONE IS RIGHT AND IS LEFT ALONE. A row
+        of cards needs air above it, the owner has not objected to any of them, and
+        tightening them would make every page cramped to fix a problem they do not have.
+   So the rule is: TIGHT when the heading is inside a panel or immediately followed by a
+   paragraph or a panel; UNCHANGED when a card grid follows. :has() carries the second
+   half, and it is already used by this site's own timeline rules, so it is not a new
+   dependency.
+   The value is the one already approved on three plates in earlier batches, so nothing
+   that has been signed off moves. */
+.hp-plate .hp-head,
+.hp-panel .hp-head,
+.hp-head:has(+ p),
+.hp-head:has(+ .hp-panel){
+  margin-bottom: clamp(20px, 2.2vw, 28px);
+}
+
+/* 3a-ii. AND THE PANEL'S OWN INSET STOPS DOUBLING THE GAP. On services s2 and faq s4 the
+   next block is a bounded panel, so the reader sees the head margin PLUS the panel's top
+   padding , 129px measured. Halving the panel's top padding where it sits directly under
+   a heading leaves the panel its inset without paying for the same space twice. */
+.hp-head + .hp-panel{
+  padding-top: var(--sp-5);
+}
+
+/* 3b. THE WHITE GLOW IS .hp-photo__edge AND IT COMES OFF. Measured, it paints solid
+   white at 0%, 82% white at 9% and 42% white at 20%, mirrored at the bottom , which on
+   a band this height is the top and bottom fifths washed out before the veil is applied
+   at all. That is the glow the owner is pointing at. Removed rather than reduced,
+   because "remove" is what was asked and because the plate carries its own ground so
+   nothing depends on it for legibility. */
+#s2-company-story .hp-photo__edge{
+  background-image: none;
+}
+
+/* 3c. THIRTY PER CENT MORE OF THE PICTURE, arrived at rather than eyeballed. The image's
+   own opacity is 1 and the flat veil over it is 30% white, so the photograph was
+   reading at about seven tenths. Thirty per cent more of that is 0.70 x 1.3 = 0.91, so
+   the veil goes to 9%.
+   THE TEXT IS UNAFFECTED BY CONSTRUCTION, not by luck: the paragraph sits on
+   .hp-plate--paper, which carries its own 86% white ground and its own shadow. Both
+   layers changed here are BEHIND that plate and never under the type. Contrast on this
+   band is re-measured afterwards regardless. */
+#s2-company-story .hp-photo__scrim{
+  background-color: color-mix(in srgb, var(--ds-bg-surface) 9%, transparent);
+}
+
+
+/* ============================================================================
+   ============================================================================
+   PART 9 , the ninth batch: the band heading gap, "What we keep to" as option A,
+   and the team page's photographic band.
+   ============================================================================
+   ============================================================================ */
+
+
+/* ---- B9-1. THE BAND HEADING GAP COMES DOWN TOO --------------------------
+   Batch 8 measured all 35 headings and split them three ways, then fixed two: headings
+   inside a panel, and headings directly above a paragraph. The third class , a heading
+   above a CARD GRID , was left at 64px on the reasoning that a row of cards wants air
+   above it and the owner had not objected to any of the twenty-one.
+   THE OWNER HAS NOW OBJECTED TO ONE OF THEM, so the reasoning was wrong. "What we keep
+   to" is a heading above a card grid and its 90px of gap was the complaint. Rather than
+   scope an exception to that one section , which is how this defect grew into
+   thirty-five instances in the first place , the whole class comes down: from 64px to
+   about 44. Card rows keep meaningfully more air than panels and paragraphs get, which
+   was the true part of the original reasoning; they just no longer get half again as
+   much as they need.
+   The owner saw this value rendered in all four layout previews before choosing, so it
+   is approved rather than assumed. */
+.hp-head{
+  margin-bottom: clamp(28px, 3vw, 44px);
+}
+
+
+/* ---- B9-2. "WHAT WE KEEP TO", OPTION A ----------------------------------
+   Chosen from four rendered options: three across, the big low-opacity numeral behind
+   each statement, text left-aligned.
+   THE NUMERAL IS A COUNTER, NOT AN ELEMENT. Three <span>s would be three new nodes in
+   an owner-approved band; a counter is none, and it renumbers itself if a statement is
+   ever added or removed. This is the same mechanism band 3 of the home page already
+   uses, which is the pattern this option was chosen to echo.
+   PAINTED AT z-index -1 INSIDE THE CARD'S OWN ISOLATED STACKING CONTEXT, so it sits
+   behind the sentence and cannot escape the card. --ds-primary-deep at 10% rather than
+   the home page's white-on-dark, because this card is white: the same treatment needs
+   the opposite ink to be the same idea. */
+.hp-values{
+  counter-reset: v9-value;
+}
+.hp-values > .hp-value{
+  counter-increment: v9-value;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  text-align:left;
+}
+.hp-values > .hp-value::before{
+  content: counter(v9-value);
+  position:absolute;
+  left:-4px;
+  bottom:-.16em;
+  z-index:-1;
+  font-family: var(--ds-font-display);
+  font-size: clamp(96px, 9vw, 132px);
+  line-height:.76;
+  font-weight:800;
+  letter-spacing:-.04em;
+  color: var(--ds-primary-deep);
+  opacity:.10;
+  font-variant-numeric: tabular-nums;
+  pointer-events:none;
+}
+.hp-values > .hp-value .hp-value__line{
+  text-align:left;
+  margin-inline:0;
+  padding-left: clamp(30px, 3vw, 44px);
+}
+
+/* 2b. THE BAND'S PHOTOGRAPH. The owner: "replace the main bg into an image of dentists
+   doing their job. do not show the faces. light morning atmosphere. keep the text
+   readable."
+   .hp-clinic IS ALREADY THIS BAND'S GROUND, so the picture is swapped rather than a new
+   mechanism added: the shared treatment paints the photograph at a low alpha under a
+   radial white pool, which is exactly the "keep the text readable" half of the
+   instruction and is the same pool four other sections use.
+   THE PICTURE WAS CHOSEN AGAINST THE BRIEF, NOT BY SCORE. Two candidates were rendered;
+   the automatic pick preferred the other one on a quiet-left/busy-right measure, which
+   is the right test for a HERO and the wrong one for a background. Looked at, the one
+   installed is the only one of the two that actually satisfies "do not show the faces":
+   both clinicians are seen from behind and in profile with their heads down and masked.
+   The other showed both faces. The measurement answered a question this band was not
+   asking; the brief decided it.
+
+   WRITTEN AS A LITERAL url() ON A CLASS, NOT AS THE CUSTOM PROPERTY, and that is the
+   whole point of the rewrite rather than a style preference. Batch 9 removed this
+   band's route card, which was the "blue box with image" the owner asked to delete, and
+   that card's <img> was the only imagery verify-section-visual-rhythm could SEE on this
+   page. The band did not lose its picture , it has this photograph , but the picture
+   arrived through `--hp-clinic-img` consumed by `background-image:var(...)` two
+   stylesheets away, and the gate reads source text rather than resolving variables, so
+   it counted About at 2/5 sections with imagery and refused every further edit to the
+   page. The gate was RIGHT to refuse on what it could read and WRONG about the render.
+   Declaring the same file as a literal url() on `.team-values` closes that gap in the
+   honest direction: the source now states the fact the browser was already painting.
+   The path is unchanged and still resolves from _design/ (the sheet that consumes it),
+   not from pages/ , the resolution trap this file documents in Part 3. */
+.team-values .hp-clinic::before{
+  background-image: url("../assets/about-values-chairside-v9.jpg");
+}
+
+
+/* ---- B9-3. "WHO YOU WILL BE DEALING WITH", THE TEAM BAND ----------------
+   "remove the gradients on the top and bottom here. add a center white gradient
+    instead. also remove the lines here, make them vertical lines on the left sides of
+    the text chunks here."
+
+   3a. THE TOP AND BOTTOM BANDS BECOME A CENTRE POOL. .hp-photo__edge was painting solid
+   --ds-bg-surface at both ends of the band and fading to clear in the middle , the
+   inverse of what this band wants, because the reading happens in the middle. One
+   radial replaces the two linears: white where the plate sits, clearing toward the
+   edges, so the photograph is strongest exactly where there is nothing on top of it. */
+#s2-persona-pillars .hp-photo__edge{
+  background-image: radial-gradient(ellipse 64% 72% at 50% 50%,
+    var(--ds-bg-surface)                                        0%,
+    color-mix(in srgb, var(--ds-bg-surface) 84%, transparent)   42%,
+    color-mix(in srgb, var(--ds-bg-surface) 40%, transparent)   72%,
+    transparent                                                100%);
+}
+
+/* 3b. THE RULE TURNS NINETY DEGREES. .hp-pillar carries border-top:2px, which is the
+   horizontal line above each label. It becomes a left border on the same weight and
+   colour, with the padding moving from the top to the inline start so the text clears
+   it. Three vertical rules down the left of three text chunks, which is what was asked,
+   and it costs no new element and no new colour. */
+.hp-pillars > .hp-pillar{
+  border-top: 0;
+  padding-top: 0;
+  border-left: 2px solid var(--ds-ink-soft);
+  padding-left: var(--sp-4);
+}
+
+
+/* ---- B9-4. THE FOOTER: TWO ALIGNMENTS -----------------------------------
+   "Adjust alignment of lefts here like the practice and town, and the address. then
+    lessen the spaces between the pages list, make consistent with the others"
+
+   4a. WHY COLUMN ONE SITS LOWER, MEASURED. Four of the five labels take one line and
+   "Practice and town" takes two, so its value starts at y=4330 where the other four
+   start at 4324. Six pixels, and it is exactly the pair the owner has boxed.
+   BATCH 6 ALREADY RESERVED TWO LINES FOR EVERY LABEL and it did not hold, because the
+   reservation was written as min-height:calc(2em * 1.35) while the label's line-height
+   was left to inherit. If the inherited line-height is anything above 1.35 then two
+   rendered lines are TALLER than the two reserved, the reservation stops reserving and
+   the taller label pushes its own value down. Pinning line-height to the same 1.35 the
+   reservation assumes is what makes the arithmetic true.
+   NOWRAP IS NOT THE FIX HERE, and it is worth saying why since it is the obvious one.
+   At 1440 the label needs 137px in a 145px track and would fit; at 1280 it needs the
+   same 137 in a 126px track and would overflow into its neighbour , which is the exact
+   collision batch 6 had to undo. A reservation works at every width; nowrap works at
+   one. */
+.cc-mast__k{
+  line-height: 1.35;
+}
+
+/* 4b. THE PAGE LIST JOINS THE RHYTHM OF THE COLUMNS BESIDE IT. Measured: the four value
+   columns run a 19px line step and the page list runs 34px , a 21.9px row plus a 12px
+   row-gap. Dropping the row-gap puts the links on the same 19px step as the opening
+   hours next to them, which is the "consistent with the others" asked for.
+   THE HIT AREA IS KEPT, and this is the part worth not losing. On a 19px rhythm the
+   anchors would be 19px tall, under the 24px pointer-target guidance. Padding grows the
+   hit box and an equal negative margin cancels its effect on layout, so the target is
+   about 25px while the baselines still sit on 19. The rhythm is what a reader sees; the
+   target is what a thumb needs, and they do not have to be the same number. */
+.cc-mast__list{
+  row-gap: 0;
+}
+/* THE HIT-AREA TRICK IS WITHDRAWN, and it was WRONG rather than merely unnecessary.
+   padding-block:3px with margin-block:-3px grows each anchor box by 6px and then cancels
+   the layout effect , which is exactly what it was written to do, and it means every link
+   box now OVERLAPS its neighbour by 6px. G-OVERLAP caught it on all six pages: "Home"
+   overlaps "What we do", "What we do" overlaps "About us", and so on down the list, 22% of
+   the smaller box each time. That is not a gate being fussy , overlapping anchor boxes
+   mean a click near a boundary can land on the wrong link.
+   THE RHYTHM WAS NEVER COMING FROM THAT RULE. With row-gap:0 the step is the anchor's own
+   22px line box with or without the padding, so removing it costs nothing a reader sees.
+   WHAT IT DOES COST IS THE HIT AREA: these footer links are about 22px tall against the
+   24px pointer-target guidance. That is a real if small accessibility shortfall, recorded
+   here rather than hidden. Buying it back honestly means a taller row, which is the
+   opposite of the instruction this rule was answering, so it is the owner's call. */
+
+
+/* ====================================================================================
+   PART 10 - THE GLOBAL CARD RULE, SWEPT ACROSS THE LADDER RATHER THAN AT ONE WIDTH
+   ====================================================================================
+   The owner's standing instruction from batch 7: "Do this automatically whenever you
+   encounter a group of cards. I do not want to repeat this instruction for every
+   section." Every fix in this part came out of running that rule as a MEASUREMENT over
+   all 16 card groups on all six pages at 1440, 1200 and 1024 , not from looking at one
+   screenshot at one width.
+   THE SWEEP IS THE POINT. At 1440 exactly one group was inconsistent. At 1200 three
+   were. At 1024 five were, and they were mostly DIFFERENT groups. A rule checked at a
+   single width would have reported the site clean and been wrong at both of the other
+   two, which is the same "green at one width, shipped at all" mistake this file already
+   records four times in Parts 4 and 8. Eight of the nine fixes were copy edits and live
+   in the page sources; the one below could not be, and this says why.
+
+   THE FOURTH SERVICE HEADING. "Crowns and bridges" sets to two lines at 1440 and to ONE
+   at 1200, while its three neighbours stay at two, so the group reads level on a large
+   screen and stepped on a laptop. That looks backwards , a narrower viewport fitting
+   MORE on a line , and the reason is that the headings are vw-clamped: at 1200 the type
+   is smaller, and the phrase that needed two lines at 202px now fits 200px. Copy cannot
+   fix this. Any wording short enough to sit on one line at 1440 would still be one line
+   at 1200, and any wording long enough to wrap at 1200 would run to three at 1440.
+   So it takes the same device card 3 already uses , a capped MEASURE, not a <br>, so the
+   swap slot underneath still holds a plain replaceable phrase. 78% was chosen by
+   measurement over 62 / 70 / 78 / 86: 62% is the value card 3 carries and it pushes this
+   heading to THREE lines at 1440 and 1100, whereas 78% holds [2,2,2,2] at 1440, 1279,
+   1200 and 1100 and leaves the 1024 two-up grid untouched at [1,1,1,1]. Copying card 3's
+   number without re-measuring would have traded one uneven row for a worse one. */
+#s2-services-preview .hp-services > li:nth-child(4) .hp-service__name,
+#s3-sub-area-blocks  .hp-services > li:nth-child(4) .hp-service__name{
+  max-width: 78%;
+  margin-inline: auto;
+}
+
+
+/* ====================================================================================
+   PART 11 - THE PHONE. "optimize the whole site for mobile. ensure proper alignments,
+   paddings, spacings, text cuts."
+   ====================================================================================
+   MEASURED FIRST, on six pages at 320/360/375/390/414/430, then triaged, because the raw
+   count was misleading: 159 of the 339 findings were images "past the viewport", and every
+   one of them is clipped by .hp-photo{overflow-x:hidden} with document.scrollWidth equal to
+   the viewport on all six pages. Nothing scrolls sideways. Those were my probe, not the
+   site, and none of them is fixed below.
+   What remained had two systemic causes and a short tail. Both causes are the same shape:
+   a desktop value that no media query ever revisits. */
+
+
+/* ---- 11.1. THE VERTICAL RHYTHM LADDER WAS DEAD, AND HAD BEEN SINCE V2 -----------
+   The approved sheet steps --hp-py down the ladder: 96 -> 72 -> 56 -> 40 as the viewport
+   narrows, and brand-card-standard repeats the same steps. v2-refinements then sets
+        :root{ --hp-py: clamp(64px, 8vw, 112px); }
+   with no media query at all. v2 loads after both, and a media query adds no specificity,
+   so that one line overrides every mobile step in both sheets. At 390px the clamp resolves
+   to its 64px FLOOR (8vw is 31px there), which is why every band on every page measured
+   64px of padding above and below its content instead of the 40px the ladder asked for.
+   The ladder was not wrong; it was unreachable.
+   Restated here, in the last sheet, so it actually applies. This is ~48px back per band,
+   and on the home page's twelve bands that is roughly 570px of dead height removed. */
+@media (max-width:768px){
+  :root{ --hp-py: 48px; }
+}
+@media (max-width:430px){
+  :root{ --hp-py: 40px; }
+}
+
+
+/* ---- 11.2. THE HERO COPY COLUMN WAS STILL HALF THE SCREEN ON A PHONE ------------
+   .hp-band--hero .hp-textzone carries max-width:min(660px, 48vw) and a 3.6vw left offset.
+   Those are the two halves of a side-by-side hero: copy on the left, photograph breathing
+   on the right. Below the point where the photo stops sitting BESIDE the text and becomes a
+   full-bleed ground BEHIND it, both halves stop being design and start being damage.
+   MEASURED at 390px: the zone is 187px wide inside a 350px column. The headline does not
+   fit and overflows its own box on ALL SIX PAGES - to x=292 on home, x=367 on the team page
+   in a 390px viewport. At 320 and 360 that overflow leaves the screen entirely, which is the
+   "text cuts" in the instruction: "at Alder Grove Dental" was 45px off-screen at 320.
+   It also produced the exact break the A11 note predicted and only fixed above 1101px,
+   "Everyday / dental care / in / Riverbend." with one word stranded on its own line.
+   And it was the biggest single source of ragged alignment: the 3.6vw offset put the hero
+   copy at x=34 while every other block on the page starts at the 20px gutter.
+   Full measure, no offset. Desktop is untouched - the A12/A11 rules above are scoped to
+   min-width:1101px and this is scoped to max-width:768px, so they never meet. */
+@media (max-width:768px){
+  .hp-band--hero .hp-textzone{
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+
+/* ---- 11.3. A PHRASE THAT CANNOT BREAK MUST STILL BE ABLE TO BREAK ---------------
+   .hp-nb and .hp-key are white-space:nowrap. They exist to stop an ugly break in a headline
+   at desktop widths, and they earn that. On a 320px screen the same rule sends "at Alder
+   Grove Dental" (334px) and "Alder Grove Dental" (296px) straight off the edge, because a
+   nowrap run simply cannot be laid out inside 280px of content.
+   An awkward line break is a blemish. Text that leaves the screen is a defect. Below 560
+   the blemish wins.
+   box-decoration-break:clone is included deliberately: .hp-key paints its colour through
+   background-clip:text, and an inline that wraps without it gets ONE gradient box stretched
+   across both fragments, so the second line comes out a different colour from the first. */
+@media (max-width:560px){
+  .hp-nb,
+  .hp-key{
+    white-space: normal;
+    -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+  }
+}
+
+
+/* ---- 11.4. ONE INTERIOR PADDING FOR CARDS, INSTEAD OF SIX -----------------------
+   Measured at 390px, the left edge of body text on the home page sat at SIX different
+   values: 20 (the gutter), 34 (hero), 53, 61, 76 and 80. Every one above 20 is a card's own
+   interior padding, carried down from desktop unchanged:
+       .hp-rail 24   .hp-ask 24   .hp-flow 32   .hp-value 32   .hp-plate 40   .hp-note 56
+   and two that COMPOUND, which is why the tail is so far out: .hp-find 24 + .hp-find__body
+   35 = 59, and .hp-pillar 24 nested inside .hp-plate--paper 24 = 48.
+   A 56px inset inside a 350px card spends a third of the width on air and leaves a 238px
+   measure for the sentence. The number that is right on a 1440px screen is not the number
+   that is right on a phone, and nothing ever restated it.
+   24px everywhere, which is the value the rails and the ask cards already use and the only
+   one of the six that measured well. Text now starts at 20 (page) or 44 (inside any card),
+   and those are the only two values on the page. */
+@media (max-width:560px){
+  .hp-flow,
+  .hp-note,
+  .hp-value,
+  .hp-plate{
+    padding: var(--sp-4);
+  }
+  /* the two compounding cases: the inner box keeps the padding, the outer one stops
+     charging for it a second time. */
+  .hp-find__body{ padding-inline: 0; }
+  #s2-persona-pillars .hp-plate{ padding-inline: 0; }
+  #s2-persona-pillars .hp-pillar{ padding-left: var(--sp-4); }
+}
+
+
+/* ---- 11.5. THE TELEPHONE AND EMAIL LINKS ARE 20px TALL -------------------------
+   Against the 24px pointer-target guidance, and on a phone these two are the links most
+   likely to be tapped in a hurry. 3px of padding on each side buys the height.
+   NO NEGATIVE MARGIN THIS TIME. Batch 9 bought hit area exactly this way in the footer and
+   the cancelling margin made every link box overlap its neighbour by 6px, which G-OVERLAP
+   caught on all six pages. Here the row is simply allowed to get taller. */
+@media (max-width:768px){
+  .hp-tel,
+  .hp-mail{
+    display: inline-block;
+    padding-block: 3px;
+  }
+}
+
+
+/* ---- 11.6. THREE CORRECTIONS TO 11.4, FOUND BY RE-MEASURING --------------------
+   The re-audit says 11.1-11.5 worked: text leaving the screen 4 -> 0, nowrap runs wider
+   than their parent 46 -> 0, tap targets under 24px 12 -> 0, glyphs outside their own box
+   40 -> 3, and the home page's SIX left-edge clusters down to three. What follows is the
+   remainder, and two of the three are mine.
+
+   (a) TWO OF THE PADDING RULES IN 11.4 NEVER APPLIED. `.hp-note` measured 76px and
+   `.hp-value__line` 82px after the change, exactly as before it. Both lost on specificity,
+   which this file has now recorded four times: `#s9-compare-teaser .hp-note` is (1,1,0) and
+   `.hp-values > .hp-value` is (0,2,0), against the bare (0,1,0) class selectors I wrote.
+   Restated at matching weight.
+   AND THEY ARE NOT SIMPLY FLATTENED TO 24, because re-reading them showed the padding is
+   not stray desktop spacing at all: both cards carry a large numeral watermark behind the
+   text, and the left inset is the reservation that keeps the words off it. That is the
+   Option A treatment the owner picked. Flattening it would have "fixed" an alignment number
+   by deleting a design decision. Instead the two are brought into agreement with EACH OTHER
+   at 64px, so the page reads with three deliberate left positions - 20 page, 44 card, 64
+   numeral card - instead of six accidental ones.
+
+   (b) THE DISPLAY FACE HAS NO FLOOR LOW ENOUGH FOR A 320px SCREEN. --hp-fs-display is
+   clamp(50px, 6.24vw, 86px) and --hp-fs-h2 is clamp(30px, 3.2vw, 44px), so at 320 both sit
+   on their FLOOR: 6.24vw is 20px there, and the clamp refuses to go below 50. A 50px face in
+   the 232px measure a padded card leaves is about five characters a line, which is what the
+   last three "glyphs outside their box" findings are - 16 to 23px of overflow on the contact
+   headline and two section headings, all three at 320 and nowhere else.
+   A clamp's floor is a promise that the type will never get smaller, and on the narrowest
+   phone that promise is the bug. One step down below 360. */
+@media (max-width:560px){
+  #s9-compare-teaser .hp-note{
+    padding: var(--sp-4) var(--sp-4) var(--sp-4) 44px;
+  }
+  .hp-values > .hp-value{
+    padding: var(--sp-4);
+  }
+  .hp-values > .hp-value .hp-value__line{
+    padding-left: 20px;
+  }
+}
+@media (max-width:360px){
+  :root{
+    --hp-fs-display: clamp(38px, 12vw, 44px);
+    --hp-fs-h2:      clamp(26px, 8.4vw, 30px);
+  }
+}
+
+
+/* ---- 11.7. THE PANEL'S OWN PADDING, AND WHAT THE GAP PROBE WAS ACTUALLY SEEING --
+   The audit reported a 57px "heading gap" on two sections at 320. Measured properly it is
+   not one gap but two things stacked: 24px of real space under the heading, plus the 32px
+   top padding of the .hp-panel that follows. The probe measures glyph to glyph, so a card's
+   interior padding reads to it as heading space. That is the probe being imprecise, not the
+   page being wrong, and it is recorded here so the number is not "fixed" twice.
+   The panel is still brought onto the 24px mobile card scale with everything else in 11.4,
+   because being the last component on a different number is its own small inconsistency. */
+@media (max-width:560px){
+  .hp-panel{ padding: var(--sp-4); }
 }
 
 
