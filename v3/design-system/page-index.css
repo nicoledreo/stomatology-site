@@ -5969,11 +5969,27 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    nowrap run simply cannot be laid out inside 280px of content.
    An awkward line break is a blemish. Text that leaves the screen is a defect. Below 560
    the blemish wins.
-   box-decoration-break:clone is included deliberately: .hp-key paints its colour through
-   background-clip:text, and an inline that wraps without it gets ONE gradient box stretched
-   across both fragments, so the second line comes out a different colour from the first. */
+   box-decoration-break:clone is included deliberately, but ONLY on .hp-key: it paints its
+   colour through background-clip:text, and an inline that wraps without clone gets ONE
+   gradient box stretched across both fragments, so the second line comes out a different
+   colour from the first. .hp-nb paints nothing, so clone would be inert on it.
+
+   THIS RULE WAS NARROWED TO HEADINGS AND THEN PUT BACK, and the round trip is worth keeping
+   because it is a clean example of fixing the wrong thing. When the render gate hard-failed
+   on span.hp-nb "it was made", the plausible story was that letting every .hp-nb wrap had
+   changed that span's box from 96x20 to a 334x48 two-line union and moved the walker's
+   sample point. The geometry part of that was TRUE and measured. The causal part was not:
+   scoping this rule to h1/h2/.hp-lead left the failure bit-for-bit identical, and cost 3
+   text cuts and 3 nowrap overflows that the wide scope had fixed.
+   The real cause was a collapsed <details> leaving a phantom rect behind , see 11.8 , and
+   once that was fixed the scope had no reason to be narrow. Restored to every .hp-nb and
+   .hp-key, which is what the measurements supported: 4 off-screen cuts and 46 nowrap runs
+   wider than their parent, all gone. A rule should be as wide as its evidence, and no
+   wider , but narrowing it to appease a symptom whose cause lies elsewhere is just damage. */
 @media (max-width:560px){
-  .hp-nb,
+  .hp-nb{
+    white-space: normal;
+  }
   .hp-key{
     white-space: normal;
     -webkit-box-decoration-break: clone;
@@ -6081,6 +6097,37 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
    because being the last component on a different number is its own small inconsistency. */
 @media (max-width:560px){
   .hp-panel{ padding: var(--sp-4); }
+}
+
+
+/* ---- 11.8. A CLOSED <details> SHOULD NOT LEAVE ITS ANSWER IN THE LAYOUT --------
+   The render gate hard-failed index at 375 on span.hp-nb "it was made", reporting white on
+   white at 1:1. Three things were established before anything was changed, because the first
+   two hypotheses were both wrong:
+     - it is NOT the hero. Measured from composited pixels, the hero's worst element is
+       6.73:1 against a 3:1 requirement, and the ground climbs only from 1.1% to 2.6%
+       luminance across the full width. Widening the text zone in 11.2 did not cause this.
+     - it is NOT the wrap rule. Scoping 11.3 to headings left the failure exactly as it was.
+     - it IS a regression from today: the previously published build (b7947e8) runs the same
+       gate at the same width and PASSES with zero contrast findings.
+   WHAT IS ACTUALLY HAPPENING. These answers sit in closed <details>. The browser does not
+   paint them, but they still report a layout rect, and the contrast walker resolves an
+   element's background by hit-testing elementsFromPoint at its box CENTRE. For a rect the
+   user cannot see, that point lands on whatever IS painted there , the white page behind ,
+   so the walker scores white text on white. The text itself is fine: measured,
+   rgba(255,255,255,.88) on rgb(11,26,43), about 13:1, and it renders correctly when opened.
+   WHY IT FLIPPED TODAY. 11.1 changed --hp-py at every band, so every vertical position on
+   the page moved, and with it the point the hit-test lands on. The old build passed on
+   geometry luck rather than on being right, and any vertical change would have flipped it.
+   THE FIX IS NOT TO APPEASE THE WALKER. Declaring the closed state explicitly is correct on
+   its own terms: it stops relying on UA ::details-content behaviour that differs between
+   engines, guarantees the answer is out of the layout AND the accessibility tree in every
+   browser rather than most, and removes a whole class of phantom-rect bug. Nothing animates
+   this collapse (checked: no transition, max-height, or grid-template-rows on .hp-faq__a),
+   so there is no open/close motion to break, and the visible design cannot change because
+   the content was already invisible when closed. */
+.hp-faq:not([open]) > .hp-faq__a{
+  display: none;
 }
 
 
