@@ -5047,6 +5047,138 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
 }
 
 
+/* ====================================================================================
+   PART 12 - THE FOOTER'S ONE TYPE SIZE, FINALLY ACTUALLY ONE
+   ====================================================================================
+   Batch 2 item 5: "Keep all footer text the same size throughout. Use the same small text
+   size currently used for 'Alder Grove Dental, Riverbend.'"
+   That was answered twice and was still wrong both times. Measured now, before this rule,
+   the block ran FOUR sizes:
+       .cc-mast__k   11.25px   "Practice and town" / "Address" / "Telephone and email"
+       .cc-mast__v   12.60px   "Alder Grove Dental, Riverbend"  <- the size the owner named
+       .cc-a         12.60px   the page list and the tel/email links
+       .cc-num       14.00px   the 01 / 02 / 03 markers
+   TWO SEPARATE REASONS, and neither was visible from the rule I wrote at the time.
+   (a) .cc-num carries `font-size:var(--ds-fs-fine)` in the CHROME sheet, set DIRECTLY on the
+       numeral. My batch-6 rule put the size on `.cc-mast__list`, which only reaches the
+       numeral by INHERITANCE, and a direct declaration beats an inherited value no matter
+       which sheet loads later. Specificity was never the problem; the cascade never got a
+       say. It needs a rule that targets the numeral itself.
+   (b) .cc-mast__k was deliberately left on the EYEBROW scale (--ds-fs-eyebrow * 0.9) by the
+       batch-6 pass, whose own comment claims it took ten per cent off "every string in the
+       block, labels included". It did take ten per cent off the labels , off a DIFFERENT
+       base , so the labels came out 11.25px against the values' 12.6px. Ten per cent off
+       everything is not the same instruction as one size for everything, and the owner asked
+       for the second one.
+   Both are put on the size the instruction names, which is the .cc-mast__v value.
+   THE LABEL GETS BIGGER, AND THAT IS THE RISK WORTH NAMING: 7d records a real collision
+   ("Practice and townAddress") that appeared when these labels could not wrap, and a wider
+   label at 12.6px pushes back toward it. The protection is `white-space:normal` plus the
+   two-line min-height reservation, both of which stay; measured after the change rather
+   than assumed. */
+.cc-mast__k,
+.cc-mast__list .cc-num{
+  font-size: calc(var(--ds-fs-fine) * 0.9);
+}
+
+
+/* ====================================================================================
+   PART 13 - THE STANDING CARD RULE, SWEPT AGAIN, AND THREE SECTIONS TOLD TO MATCH
+   ====================================================================================
+   Answers the batch-7 standing card rule ("Do this automatically whenever you encounter
+   a group of cards"), batch-7 items 14 and 16, and the two "make this section exactly
+   the same" instructions. Every number below was MEASURED at 1440 / 1279 / 1200 / 1100 /
+   1024 / 900 / 768 / 390 with true rendered line counts, taken from Range.getClientRects
+   line-box tops rather than height divided by line-height. That distinction matters here:
+   a one-line heading sitting inside a two-line reserved box measures as two by the
+   height method, which is how an earlier pass scored this family green while it was not.
+
+   13.1 THE HOME "GETTING HERE" NOTES SIT ON THE FLOOR OF THEIR CARD.
+   .hp-notes is a three-column grid, so all three li stretch to the tallest. The copy was
+   top-anchored, so the short card carried exactly one unused line at its foot: bottom
+   gaps measured 80.06 / 52.53 / 52.53 at 1440, a spread of 27.53 against a line-height of
+   27.54. That is the "big gap at the bottom" the owner has now raised twice. Anchoring
+   the copy to the bottom levels the floor; the three sentences were also rewritten to
+   near-equal length so the line counts agree as well. Measured after: gaps 52.53 on all
+   three at every width down to 900, 28.53 at 390, spread 0.00 throughout.
+   Flex is safe on THIS element specifically because each li holds one bare text node with
+   no inline element children, so there is no anonymous-flex-item to split a sentence from
+   its full stop. The numeral is a position:absolute pseudo-element and is unaffected. */
+#s9-compare-teaser .hp-note{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* 13.2 "WHO YOU'LL SEE" GETS THE SAME RAIL AS "WHAT WE DO".
+   Owner, batch 7: "Copy the exact design, card treatment, sizing, spacing, typography and
+   alignment of the More About the Practice section on the What We Do page. Do not create
+   a different variation of this section." Measured, it was a different variation: the
+   label ran clamp(15px, 1.15vw, 16.5px) against the shared clamp(19px, 1.55vw, 22px), and
+   the card floor was clamp(112px, 14svh, 152px) against the shared clamp(200px, 24svh,
+   280px) - 140px tall cards against 240px. Both are restored to the shared values, and
+   the four rail sentences were shortened so they still hold ONE line each at the larger
+   label scale in a four-up box. Measured after: labels 1 line and lines 1 line on all four
+   cards at all eight widths, card height 240px at and above 900 - the same 240px the
+   services rail renders.
+   THE FOUR-COLUMN GRID STAYS, and that is deliberate rather than drift. This page routes
+   to four destinations where the other two route to three. Forcing the shared three-column
+   grid would drop the fourth card onto a row of its own, one card against a row of three,
+   which is precisely the "one card breaking the alignment" the same instruction forbids.
+   Column COUNT follows the number of destinations; card TREATMENT follows services. */
+#s4-ecosystem-block .hp-rail__label{
+  font-size: clamp(19px, 1.55vw, 22px);
+}
+@media (min-width:900px){
+  #s4-ecosystem-block .hp-rail{ min-height: clamp(200px, 24svh, 280px); }
+}
+
+/* 13.3 THE QUESTIONS PAGE'S PRACTICAL QUESTIONS MATCH THE HOME PAGE'S.
+   Owner, batch 7 item 12: "Make this section look exactly like the Practical Questions
+   section on the homepage. Copy the existing component rather than approximating it."
+   Typography and layout already matched; the box model did not. Measured at 1440 the
+   section stood 1307.41px against the homepage's 785.41px. Three causes, all here:
+     (a) .hp-faq inherited 40px of padding-block from the page sheet, 80px per item;
+     (b) summary.hp-faq__q carried an 8px bottom margin the homepage's does not;
+     (c) the homepage draws a second hairline on the li as well as on the details element,
+         and that rule is scoped to .hp-qitem, so this page never got it.
+   Measured after: .hp-faq 84.2px becomes 76.2px and the li 77.2px, which are the
+   homepage's numbers exactly. */
+#s3-sub-area-blocks .hp-faq{ padding-block: 0; }
+#s3-sub-area-blocks .hp-faq__q{ margin-bottom: 0; }
+#s3-sub-area-blocks .hp-faqs > li{ border-bottom: var(--ds-divider-h) solid var(--ds-line); }
+
+/* 13.4 AND ITS CROSS-LINK RAIL MATCHES THE ONE ON "WHAT WE DO".
+   Owner, batch 7 item 14: "Make this section exactly the same as the corrected More About
+   the Practice section on the What We Do page." The band's ground was INVERTED - it
+   painted rgb(11,26,43) with white type where services paints rgb(255,255,255) with
+   rgb(11,26,43) type. The ground class is fixed in the markup; the card floor is fixed
+   here, 140px measured against the services rail's 240px. Contrast was swept across every
+   text element in the band with the new ground before the change was kept: 9 elements,
+   0 failures, and the heading pair comes out at 17.55:1 and 7.26:1 - the same two numbers
+   the services band measures. */
+@media (min-width:900px){
+  #s5-cross-link-rail .hp-rail{ min-height: clamp(200px, 24svh, 280px); }
+}
+
+/* 13.5 THE FIND US HERO KEEPS ITS SUBJECT ON THE RIGHT ON A PHONE.
+   Owner, batch 7 item 16: "Keep the main visual subject and details on the right side.
+   Keep the left side clean, calm and uncluttered for the hero text." At 1440 the crop
+   satisfies that - per-fifth luminance standard deviation runs 31.5 / 50.2 / 46.9 / 43 /
+   58.3 left to right, so the right fifth carries 1.85x the detail of the left. At 390 the
+   box is portrait, only 27.8 per cent of the image width is visible, and the inherited
+   46 per cent anchor made the slice flat: 49.6 / 42.6 / 45.1 / 46.9 / 49.8, a right-to-left
+   ratio of 1.00. Anchoring at 82 per cent moves the visible window to 59.2-87.0 per cent of
+   the source and measures 47.7 / 43.2 / 40 / 60.3 / 61.2, ratio 1.28, with the detail in
+   the right two fifths and the left three calm - which is what the instruction describes.
+   The hero copy's contrast was measured against the composited pixels under all four
+   candidate anchors before this one was chosen: it does not move, and the body lines
+   actually improve from 10.74:1 to 11.94:1. */
+@media (max-width:768px){
+  #s1-contact-hero .hp-photo__img{ object-position: 82% 52%; }
+}
+
+
 /* ---- per-page tail, generated: this page is nav item 6 of 6 (contact) ---- */
 .cc-nav > .cc-nav__item:nth-child(6) > .cc-link .cc-link__label::after{
   transform:scaleX(1);
